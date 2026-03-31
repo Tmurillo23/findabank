@@ -1,3 +1,4 @@
+
 import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -9,11 +10,11 @@ interface BulkEmailOptions {
 
 /**
  * Envía un mensaje a un array de correos electrónicos (Bulk email)
+ * MÁXIMO 100 CORREOS POR LLAMADA A ESTA FUNCIÓN POR LIMITACIONES DE LA API Y PLAN QUE TENEMOS
  */
-export async function sendBulkEmails({ emails, subject, message }: BulkEmailOptions) {
-  // Preparamos el array de configuración de correos para `resend.batch.send`
+export async function sendBulkEmails(from_email : string,{emails, subject, message }: BulkEmailOptions) {
   const emailPayloads = emails.map((email) => ({
-    from: 'onboarding@resend.dev', // Asegúrate de reemplazar esto por tu dominio verificado cuando pases a producción
+    from: from_email,
     to: email,
     subject: subject,
     html: message,
