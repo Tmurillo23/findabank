@@ -7,6 +7,8 @@
  */
 export type BloodType = "O+" | "O-" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-";
 
+export const BLOOD_TYPES: BloodType[] = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+
 /**
  * Perfil completo de un donante en la BD
  */
@@ -27,6 +29,10 @@ export interface CreateDonorProfileInput {
   blood_type: BloodType;
   puede_donar_leche: boolean;
   description?: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
 }
 
 /**
@@ -37,5 +43,8 @@ export interface UpdateDonorProfileInput {
   blood_type?: BloodType;
   puede_donar_leche?: boolean;
   description?: string;
+  location?: {
+    lat: number;
+    lng: number;
+  };
 }
-

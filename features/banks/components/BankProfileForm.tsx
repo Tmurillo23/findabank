@@ -7,7 +7,7 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Inpu
 import { useRouter } from "next/navigation";
 import { cn } from "@/shared/services/utils";
 import { useUserRole } from "@/shared/hooks/useUserRole";
-import {getCurrentLocation} from "@/shared/services/geolocalization";
+import {getCurrentLocation} from "@/shared/services/geolocalization/geolocalization";
 
 export function BankProfileForm({
   className,

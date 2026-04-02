@@ -2,5 +2,5 @@
 export { } from './components';
 
 // Servicios
-export { } from './services';
-
+export * from "./types";
+export * from "./services";

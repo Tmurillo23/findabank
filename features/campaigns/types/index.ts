@@ -5,7 +5,7 @@
 /**
  * Perfil completo de una campaña en la BD
  */
-export interface Campaign {
+export interface Campaigns {
   id: string;
   banco_id: string;
   nombre: string;

@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { createDonorProfile } from "@/features/auth/services/profileActions";
+import { createDonorProfile } from "@/features/donors/services/donors";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 import { useRouter } from "next/navigation";
 import { cn } from "@/shared/services/utils";
-import type { BloodType } from "@/features/donors/types";
-
-// TODO:importar blood_types desde tipos y meter esta lógica en services y poner también la función para encontrar bancos cercanos
-
-const BLOOD_TYPES: BloodType[] = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+import { BloodType, BLOOD_TYPES } from "@/features/donors/types";
+import { getCurrentLocation } from "@/shared/services/geolocalization/geolocalization";
 
 export function DonorProfileForm({
   className,
@@ -19,14 +16,38 @@ export function DonorProfileForm({
   const [bloodType, setBloodType] = useState<BloodType>(BLOOD_TYPES[0]);
   const [canDonateMilk, setCanDonateMilk] = useState(false);
   const [description, setDescription] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
   const router = useRouter();
+
+  const handleGetLocation = async () => {
+    setGeoLoading(true);
+    setError(null);
+
+    try {
+      const coords = await getCurrentLocation();
+      setLatitude(coords.lat.toString());
+      setLongitude(coords.lng.toString());
+    } catch {
+      setError("No se pudo obtener tu ubicación. Ingresa manualmente.");
+    } finally {
+      setGeoLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    if (!latitude || !longitude) {
+      setError("Ubicación requerida. Por favor, usa el botón o ingresa las coordenadas.");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       await createDonorProfile({
@@ -34,6 +55,10 @@ export function DonorProfileForm({
         blood_type: bloodType,
         puede_donar_leche: canDonateMilk,
         description,
+        location: {
+          lat: parseFloat(latitude),
+          lng: parseFloat(longitude),
+        },
       });
 
       // Redirigir al dashboard de donante
@@ -86,6 +111,47 @@ export function DonorProfileForm({
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Ubicación */}
+              <div className="space-y-3">
+                <Label>Ubicación Geográfica</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGetLocation}
+                  disabled={geoLoading}
+                >
+                  {geoLoading ? "Obteniendo ubicación..." : "📍 Usar Mi Ubicación Actual"}
+                </Button>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="grid gap-2">
+                    <Label htmlFor="latitude">Latitud</Label>
+                    <Input
+                      id="latitude"
+                      type="number"
+                      step="0.0001"
+                      placeholder="10.3123"
+                      value={latitude}
+                      onChange={(e) => setLatitude(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="longitude">Longitud</Label>
+                    <Input
+                      id="longitude"
+                      type="number"
+                      step="0.0001"
+                      placeholder="-75.5234"
+                      value={longitude}
+                      onChange={(e) => setLongitude(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* ¿Puedes donar leche? */}

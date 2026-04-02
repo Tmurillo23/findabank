@@ -223,7 +223,7 @@ export function BankUpdateForm() {
                         setGeoLoading(true);
                         setProfileError(null);
                         try {
-                          const { getCurrentLocation } = await import("@/shared/services/geolocalization");
+                          const { getCurrentLocation } = await import("@/shared/services/geolocalization/geolocalization");
                           const coords = await getCurrentLocation();
                           setEditLatitude(coords.lat.toString());
                           setEditLongitude(coords.lng.toString());
