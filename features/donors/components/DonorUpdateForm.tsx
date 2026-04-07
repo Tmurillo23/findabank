@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { updateDonorProfileInfo, deleteDonorProfileInfo } from "@/features/donors/services/donors";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 import { useRouter } from "next/navigation";
@@ -18,14 +18,50 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
   const [bloodType, setBloodType] = useState<BloodType>(initialData.blood_type || BLOOD_TYPES[0]);
   const [canDonateMilk, setCanDonateMilk] = useState(initialData.puede_donar_leche || false);
   const [description, setDescription] = useState(initialData.descripcion || "");
+  const [latitude, setLatitude] = useState(initialData.latitude || 0);
+  const [longitude, setLongitude] = useState(initialData.longitude || 0);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
   const router = useRouter();
+
+  // Obtener geolocalización al cargar el componente
+  useEffect(() => {
+    if (initialData.latitude === 0 && initialData.longitude === 0) {
+      getGeolocation();
+    }
+  }, []);
+
+  const getGeolocation = () => {
+    setGeoLoading(true);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setGeoLoading(false);
+        },
+        () => {
+          setError("No se pudo obtener tu ubicación. Por favor, intenta de nuevo.");
+          setGeoLoading(false);
+        }
+      );
+    } else {
+      setError("Geolocalización no disponible en tu navegador");
+      setGeoLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    if (latitude === 0 && longitude === 0) {
+      setError("Por favor, proporciona tu ubicación");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const upsertData: Partial<DonorProfile> = {
@@ -33,7 +69,10 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
         full_name: fullName,
         blood_type: bloodType,
         puede_donar_leche: canDonateMilk,
-        descripcion: description
+        descripcion: description,
+        latitude: latitude,
+        longitude: longitude,
+        correo: initialData.correo
       };
 
       await updateDonorProfileInfo(upsertData);
@@ -132,6 +171,27 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
                   onChange={(e) => setDescription(e.target.value)}
                   className="flex min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 />
+              </div>
+
+              {/* Ubicación */}
+              <div className="grid gap-2">
+                <Label>📍 Ubicación</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    onClick={getGeolocation}
+                    disabled={geoLoading || isLoading}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    {geoLoading ? "Obteniendo ubicación..." : latitude && longitude ? "Actualizar Ubicación" : "Obtener Ubicación"}
+                  </Button>
+                </div>
+                {latitude && longitude && (
+                  <p className="text-sm text-muted-foreground">
+                    📍 {latitude.toFixed(4)}, {longitude.toFixed(4)}
+                  </p>
+                )}
               </div>
 
               {error && <p className="text-sm text-red-500">{error}</p>}

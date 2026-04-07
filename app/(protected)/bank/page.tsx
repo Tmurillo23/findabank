@@ -141,11 +141,14 @@ export default function BankAdminDashboard() {
                 >
                   ⚙ Configuración
                 </button>
-                <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
-                  Crear Campaña
+                <button
+                  onClick={() => router.push("/bank/campaigns")}
+                  className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                >
+                  📢 Mis Campañas
                 </button>
                 <button className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                  Ver Donantes
+                  👥 Ver Donantes
                 </button>
               </CardContent>
             </Card>

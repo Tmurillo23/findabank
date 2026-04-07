@@ -42,6 +42,9 @@ export default function DonorUpdateProfilePage() {
             puede_donar_leche: false,
             descripcion: "",
             created_at: new Date().toISOString(),
+            latitude: 0,
+            longitude: 0,
+            correo: user.email || "",
           });
         } else {
           setDonor(data as DonorProfile);

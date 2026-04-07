@@ -1,41 +1,31 @@
 import { createClient } from "@/shared/services/supabase/client";
 
-export async function getBankLocation(bankId: string) {
-  const supabase = createClient();
-  const { data, error } = await supabase.from("banco").select("location").eq("id", bankId).single();
-
-  if (error) {
-    throw error;
+export async function updateBankProfileInfo(
+  bankId: string,
+  updates: {
+    nombre?: string;
+    tipo?: string;
+    direccion?: string;
+    descripcion?: string;
+    latitude?: string;
+    longitude?: string;
   }
-
-  if (data?.location) {
-    const match = data.location.match(/POINT\(([-0-9.]+) ([-0-9.]+)\)/);
-    if (match) {
-      return {
-        lng: match[1],
-        lat: match[2],
-      };
-    }
-  }
-  return null;
-}
-
-export async function getBankProfile(bankId: string) {
+) {
   const supabase = createClient();
-  const { data, error } = await supabase.from("banco").select("*").eq("id", bankId).single();
 
-  if (error) {
-    throw error;
-  }
-  return data;
-}
-
-export async function updateBankProfileInfo(bankId: string, updates: { nombre?: string; tipo?: string; direccion?: string; descripcion?: string; location?: string }) {
-  const supabase = createClient();
-  const payload = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const payload: Record<string, any> = {
     id: bankId,
-    ...updates,
   };
+
+  // Agregar campos si existen
+  if (updates.nombre !== undefined) payload.nombre = updates.nombre;
+  if (updates.tipo !== undefined) payload.tipo = updates.tipo;
+  if (updates.direccion !== undefined) payload.direccion = updates.direccion;
+  if (updates.descripcion !== undefined) payload.descripcion = updates.descripcion;
+  if (updates.latitude !== undefined) payload.latitude = parseFloat(updates.latitude);
+  if (updates.longitude !== undefined) payload.longitude = parseFloat(updates.longitude);
+
   const { error } = await supabase.from("banco").upsert(payload);
   if (error) {
     throw error;

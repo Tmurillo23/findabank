@@ -1,13 +1,13 @@
 "use server";
 
 import { createClient } from "@/shared/services/supabase/server";
-import { CreateDonorProfileInput } from "@/features/donors/types";
-import { CreateBankProfileInput, BANK_TYPE_MAP } from "@/features/banks/types";
+import { UpdateDonorProfileInput } from "@/features/donors/types";
+import { UpdateBankProfileInput, BANK_TYPE_MAP } from "@/features/banks/types";
 
 /**
  * Crear perfil de donante en tabla 'donors'
  */
-export async function createDonorProfile(input: CreateDonorProfileInput) {
+export async function createDonorProfile(input: UpdateDonorProfileInput) {
   const supabase = await createClient();
 
   const {
@@ -20,13 +20,15 @@ export async function createDonorProfile(input: CreateDonorProfileInput) {
 
   const { data, error } = await supabase
     .from("donors")
-    .insert({
+    .upsert({
       id: user.id,
       full_name: input.full_name,
       blood_type: input.blood_type,
       puede_donar_leche: input.puede_donar_leche,
-      description: input.description,
+      descripcion: input.descripcion,
       created_at: new Date().toISOString(),
+      correo: user.email,
+
     })
     .select()
     .single();
@@ -42,7 +44,7 @@ export async function createDonorProfile(input: CreateDonorProfileInput) {
 /**
  * Crear perfil de banco en tabla 'banco'
  */
-export async function createBankProfile(input: CreateBankProfileInput) {
+export async function createBankProfile(input: UpdateBankProfileInput) {
   const supabase = await createClient();
 
   const {
@@ -58,13 +60,14 @@ export async function createBankProfile(input: CreateBankProfileInput) {
 
   const { data, error } = await supabase
     .from("banco")
-    .insert({
+    .upsert({
       id: user.id,
       nombre: input.nombre,
       tipo: tipoValue,
       descripcion: input.descripcion,
       direccion: input.direccion,
-      location: `POINT(${input.location.lng} ${input.location.lat})`,
+      latitude: input.latitude,
+      longitude: input.longitude,
       created_at: new Date().toISOString(),
     })
     .select()

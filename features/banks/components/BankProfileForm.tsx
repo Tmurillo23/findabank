@@ -58,10 +58,8 @@ export function BankProfileForm({
         tipo: bankType,
         descripcion,
         direccion,
-        location: {
-          lat: parseFloat(latitude),
-          lng: parseFloat(longitude),
-        },
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
       });
 
       // Redirigir al dashboard del banco

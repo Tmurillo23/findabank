@@ -13,15 +13,15 @@ import {
 import { useRouter } from "next/navigation";
 import { BloodStockEditor, MilkStockEditor } from "@/features/banks/components";
 import { BankConfigTabKey } from "@/features/banks/types";
-import { getBankLocation, getBankProfile, updateBankProfileInfo, deleteBankProfileInfo } from "@/features/banks/services/bankProfileService";
+import { updateBankProfileInfo,  } from "@/features/banks/services/bankProfileService";
 import { createClient } from "@/shared/services/supabase/client";
 
-export function BankUpdateForm() {
+export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "milk_bank" | null }) {
   const router = useRouter();
 
   const [bankId, setBankId] = useState<string>("");
-  const [bankName, setBankName] = useState<string>("");
-  const [bankType, setBankType] = useState<"sangre" | "leche">("sangre");
+  const [bankName] = useState<string>("");
+  const [bankType, setBankType] = useState<"sangre" | "leche">(initialRole === "milk_bank" ? "leche" : "sangre");
 
   const [activeTab, setActiveTab] = useState<BankConfigTabKey>("perfil");
   const [loadingConfig, setLoadingConfig] = useState(true);
@@ -37,7 +37,7 @@ export function BankUpdateForm() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
-    const fetchBankData = async () => {
+    const initializeBankForm = async () => {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -48,52 +48,27 @@ export function BankUpdateForm() {
           return;
         }
 
-        try {
-          const data = await getBankProfile(user.id);
-          const currentBankId = user.id;
-          const currentType = (user.user_metadata?.role === "milk_bank" ? "leche" : "sangre");
+        // Establecer el ID del banco
+        setBankId(user.id);
 
-          let loadedName = "";
-          let loadedAddress = "";
-          let loadedDesc = "";
-
-          if (data) {
-            loadedName = data.nombre || "";
-            loadedAddress = data.direccion || "";
-            loadedDesc = data.descripcion || "";
-            setBankType(data.tipo as "sangre" | "leche");
-          } else {
-            setBankType(currentType);
-          }
-
-          setBankId(currentBankId);
-          setBankName(loadedName);
-          setEditNombre(loadedName);
-          setEditDireccion(loadedAddress);
-          setEditDescripcion(loadedDesc);
-
-          const coords = await getBankLocation(currentBankId);
-          if (coords) {
-            setEditLongitude(coords.lng.toString());
-            setEditLatitude(coords.lat.toString());
-          }
-        } catch (dbError: unknown) {
-          if ((dbError as { code?: string })?.code !== "PGRST116") {
-            setProfileError("No se encontraron datos del banco");
-            setLoadingConfig(false);
-            return;
-          }
+        // Determinar el tipo de banco
+        let currentType: "sangre" | "leche" = "sangre";
+        if (initialRole === "milk_bank") {
+          currentType = "leche";
+        } else if (user.user_metadata?.role === "milk_bank") {
+          currentType = "leche";
         }
+        setBankType(currentType);
 
       } catch (err) {
-        setProfileError(err instanceof Error ? err.message : "Error cargando datos");
+        setProfileError(err instanceof Error ? err.message : "Error al inicializar el formulario");
       } finally {
         setLoadingConfig(false);
       }
     };
 
-    fetchBankData();
-  }, []);
+    initializeBankForm();
+  }, [initialRole]);
 
 
 
@@ -150,23 +125,34 @@ export function BankUpdateForm() {
                     setIsSavingProfile(true);
                     setProfileError(null);
 
-                    try {
-                      const updates: Record<string, string | undefined> = {
-                        nombre: editNombre,
-                        tipo: bankType === "leche" ? "leche" : "sangre",
-                        direccion: editDireccion,
-                        descripcion: editDescripcion,
-                      };
+                    // Validaciones
+                    if (!editNombre || editNombre.trim() === "") {
+                      setProfileError("El nombre del banco es requerido.");
+                      setIsSavingProfile(false);
+                      return;
+                    }
 
-                      if (editLatitude && editLongitude) {
-                        updates.location = `POINT(${editLongitude} ${editLatitude})`;
-                      } else if (!bankName) {
-                        // Si es nuevo (bankName vacio) requiere location.
-                        // Si ya tiene una en BD, no es necesaria enviarla de nuevo
-                        setProfileError("La ubicación geográfica es requerida al crear el perfil.");
-                        setIsSavingProfile(false);
-                        return;
-                      }
+                    if (!editDireccion || editDireccion.trim() === "") {
+                      setProfileError("La dirección es requerida.");
+                      setIsSavingProfile(false);
+                      return;
+                    }
+
+                    if (!editLatitude || !editLongitude) {
+                      setProfileError("La ubicación geográfica es requerida. Por favor, presiona 'Usar Mi Ubicación Actual' o ingresa las coordenadas manualmente.");
+                      setIsSavingProfile(false);
+                      return;
+                    }
+
+                    try {
+                      const updates: Record<string, string> = {
+                        nombre: editNombre.trim(),
+                        tipo: bankType === "leche" ? "leche" : "sangre",
+                        direccion: editDireccion.trim(),
+                        descripcion: editDescripcion.trim(),
+                        latitude: editLatitude,
+                        longitude: editLongitude,
+                      };
 
                       await updateBankProfileInfo(bankId, updates);
 
@@ -288,9 +274,10 @@ export function BankUpdateForm() {
                       className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                       disabled={isSavingProfile}
                       onClick={async () => {
-                        if (confirm("De verdad deseas eliminar tu perfil de banco? Esta accion no se puede deshacer.")) {
+                        if (confirm("¿De verdad deseas eliminar tu perfil de banco? Esta acción no se puede deshacer.")) {
                           setIsSavingProfile(true);
                           try {
+                            const { deleteBankProfileInfo } = await import("@/features/banks/services/bankProfileService");
                             await deleteBankProfileInfo(bankId);
                             alert("Perfil eliminado correctamente.");
                             window.location.href = "/";

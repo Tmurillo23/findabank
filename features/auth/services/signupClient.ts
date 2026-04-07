@@ -12,7 +12,7 @@ export async function signUpWithEmail(
     role === "donor"
       ? "/donor/update-profile"
       : role === "blood_bank" || role === "milk_bank"
-      ? "/bank/update-profile"
+      ? `/bank/update-profile?role=${role}`
       : "/404-error";
 
   const { data, error } = await supabase.auth.signUp({
@@ -22,7 +22,7 @@ export async function signUpWithEmail(
       data: {
         role, // Guardar rol en metadata del usuario
       },
-      emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}${redirectPath}`,
+      emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/confirm?next=${encodeURIComponent(redirectPath)}`,
     },
   });
 
