@@ -2,8 +2,7 @@
 
 import { createClient } from "@/shared/services/supabase/server";
 import { sendBulkEmails } from "@/shared/services/notifications/resend";
-import { calculateDistance } from "@/shared/services/geolocalization/geolocalization";
-import { parseLocation } from "@/features/donors/services/donors";
+import { getDonorEmailsByRadius } from "@/features/banks/services/bankCampaignService";
 
 export interface CreateCampaignOptions {
   banco_id: string;
@@ -42,60 +41,10 @@ export async function getCampaignsByBank(bancoId: string) {
   return data as Campaign[];
 }
 
-/**
- * Función interna para el servidor: Obtiene los correos de donantes por radio
- */
-async function fetchDonorsEmailsByRadius(bankId: string, radiusKm: number, isMilkBank: boolean) {
-  const supabase = await createClient();
 
-  const { data: bankData, error: bankError } = await supabase
-    .from("banco")
-    .select("location")
-    .eq("id", bankId)
-    .single();
-
-  if (bankError || !bankData?.location) {
-    throw new Error("No se pudo obtener la ubicación del banco.");
-  }
-
-  const bankCoords = parseLocation(bankData.location);
-  if (!bankCoords) {
-    throw new Error("Ubicación del banco inválida.");
-  }
-
-  let query = supabase.from("donors").select("*, auth_users:id(email)");
-
-  if (isMilkBank) {
-    query = query.eq("puede_donar_leche", true);
-  }
-
-  const { data: donorsData, error: donorsError } = await query;
-  if (donorsError) throw donorsError;
-
-  const matchingEmails: string[] = [];
-
-  for (const donor of (donorsData || [])) {
-    const donorCoords = donor.location ? parseLocation(donor.location) : null;
-
-    if (donorCoords) {
-      const distance = calculateDistance(bankCoords, donorCoords);
-
-      if (distance <= radiusKm) {
-        const emailObjeto = Array.isArray(donor.auth_users) ? donor.auth_users[0] : donor.auth_users;
-        const email = emailObjeto?.email || donor.email;
-
-        if (email) {
-          matchingEmails.push(email);
-        }
-      }
-    }
-  }
-
-  return matchingEmails;
-}
 
 export async function createLocalCampaign(options: CreateCampaignOptions) {
-  const supabase = await createClient(); // Use server client since we send emails
+  const supabase = await createClient();
 
   // 1. Insert the campaign in the database
   const { data: campaignData, error: insertError } = await supabase
@@ -117,7 +66,7 @@ export async function createLocalCampaign(options: CreateCampaignOptions) {
 
   // 2. Find donors in the radius
   try {
-    const emails = await fetchDonorsEmailsByRadius(options.banco_id, options.radiusKm, options.isMilkBank);
+    const emails = await getDonorEmailsByRadius(options.banco_id, options.radiusKm, options.isMilkBank);
 
     // 3. Send bulk emails via Resend
     if (emails && emails.length > 0) {

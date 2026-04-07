@@ -1,27 +1,24 @@
-import { createClient } from "@/shared/services/supabase/client";
+import { createClient } from "@/shared/services/supabase/server";
 
 export async function getBankLocation(bankId: string) {
-  const supabase = createClient();
-  const { data, error } = await supabase.from("banco").select("location").eq("id", bankId).single();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("banco").select("latitude, longitude").eq("id", bankId).single();
 
   if (error) {
     throw error;
   }
 
-  if (data?.location) {
-    const match = data.location.match(/POINT\(([-0-9.]+) ([-0-9.]+)\)/);
-    if (match) {
-      return {
-        lng: match[1],
-        lat: match[2],
-      };
-    }
+  if (data?.latitude && data?.longitude) {
+    return {
+      lng: data.longitude,
+      lat: data.latitude,
+    };
   }
   return null;
 }
 
 export async function getBankProfile(bankId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.from("banco").select("*").eq("id", bankId).single();
 
   if (error) {
@@ -30,8 +27,8 @@ export async function getBankProfile(bankId: string) {
   return data;
 }
 
-export async function updateBankProfileInfo(bankId: string, updates: { nombre?: string; tipo?: string; direccion?: string; descripcion?: string; location?: string }) {
-  const supabase = createClient();
+export async function updateBankProfileInfo(bankId: string, updates: { nombre?: string; tipo?: string; direccion?: string; descripcion?: string; latitude?: number; longitude?: number }) {
+  const supabase = await createClient();
   const payload = {
     id: bankId,
     ...updates,
@@ -43,9 +40,10 @@ export async function updateBankProfileInfo(bankId: string, updates: { nombre?: 
 }
 
 export async function deleteBankProfileInfo(bankId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.from("banco").delete().eq("id", bankId);
   if (error) {
     throw error;
   }
 }
+

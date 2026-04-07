@@ -32,7 +32,8 @@ export interface BankProfile {
   tipo: BankType;
   descripcion?: string;
   direccion: string;
-  location: string; // POINT(lng lat) en la BD
+  latitude: number;
+  longitude: number;
   created_at: string;
 }
 
@@ -54,7 +55,8 @@ export interface UpdateBankProfileInput {
   nombre?: string;
   descripcion?: string;
   direccion?: string;
-  location?: Location;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface BankConfigProps {

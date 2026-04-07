@@ -139,12 +139,16 @@ export default function BankAdminDashboard() {
                   onClick={() => router.push("/bank/update-profile")}
                   className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition"
                 >
-                  ⚙ Configuración
+                  Configuración
                 </button>
-                <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
+                <button
+                    onClick={() => router.push("/bank/campaigns")}
+                    className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition"
+                >
                   Crear Campaña
+
                 </button>
-                <button className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                  <button className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
                   Ver Donantes
                 </button>
               </CardContent>

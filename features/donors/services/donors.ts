@@ -5,21 +5,6 @@ import { DonorProfile, CreateDonorProfileInput } from "@/features/donors/types";
 // TODO: hacer las funciones: getDonorStats. Esto es para después
 
 /**
- * Función auxiliar para extraer lat/lng de un string POINT(lng lat) devuelto por PostGIS
- */
-export function parseLocation(pointString: string): Coordinates | null {
-  if (!pointString) return null;
-  const match = pointString.match(/POINT\(([-\d.]+)\s+([-\d.]+)\)/);
-  if (match) {
-    return {
-      lng: parseFloat(match[1]),
-      lat: parseFloat(match[2]),
-    };
-  }
-  return null;
-}
-
-/**
  * Crea o inserta un perfil de donante usando el cliente de Supabase
  */
 export async function createDonorProfile(input: CreateDonorProfileInput) {
@@ -40,8 +25,9 @@ export async function createDonorProfile(input: CreateDonorProfileInput) {
       full_name: input.full_name,
       blood_type: input.blood_type,
       puede_donar_leche: input.puede_donar_leche,
-      descripcion: input.description, // Nota: el tipo CreateDonorProfileInput usa 'description' pero en BD es 'descripcion'
-      location: `POINT(${input.location.lng} ${input.location.lat})`,
+      descripcion: input.description,
+      latitude: input.latitude,
+      longitude: input.longitude,
       created_at: new Date().toISOString(),
     })
     .select()
@@ -68,8 +54,11 @@ export async function getNearbyBanks(donorCoords: Coordinates, radiusKm: number)
 
   const nearbyBanks = [];
   for (const bank of banks || []) {
-    const bankCoords = parseLocation(bank.location);
-    if (bankCoords) {
+    if (bank.latitude && bank.longitude) {
+      const bankCoords: Coordinates = {
+        lat: bank.latitude,
+        lng: bank.longitude,
+      };
       const distance = calculateDistance(donorCoords, bankCoords);
       if (distance <= radiusKm) {
         nearbyBanks.push({ ...bank, distance });
@@ -80,7 +69,7 @@ export async function getNearbyBanks(donorCoords: Coordinates, radiusKm: number)
   return nearbyBanks.sort((a, b) => a.distance - b.distance);
 }
 
-export async function updateDonorProfileInfo(upsertData: Partial<DonorProfile>) {
+export async function updateDonorProfileInfo(upsertData: Partial<DonorProfile> & { latitude?: number; longitude?: number }) {
   const supabase = createClient();
   const { error } = await supabase.from("donors").upsert(upsertData);
   if (error) {

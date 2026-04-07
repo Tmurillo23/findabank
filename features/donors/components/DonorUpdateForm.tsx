@@ -18,8 +18,11 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
   const [bloodType, setBloodType] = useState<BloodType>(initialData.blood_type || BLOOD_TYPES[0]);
   const [canDonateMilk, setCanDonateMilk] = useState(initialData.puede_donar_leche || false);
   const [description, setDescription] = useState(initialData.descripcion || "");
+  const [editLatitude, setEditLatitude] = useState<string>(initialData.latitude?.toString() || "");
+  const [editLongitude, setEditLongitude] = useState<string>(initialData.longitude?.toString() || "");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,13 +31,18 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
     setError(null);
 
     try {
-      const upsertData: Partial<DonorProfile> = {
+      const upsertData: Partial<DonorProfile> & { latitude?: number; longitude?: number } = {
         id: initialData.id,
         full_name: fullName,
         blood_type: bloodType,
         puede_donar_leche: canDonateMilk,
         descripcion: description
       };
+
+      if (editLatitude && editLongitude) {
+        upsertData.latitude = parseFloat(editLatitude);
+        upsertData.longitude = parseFloat(editLongitude);
+      }
 
       await updateDonorProfileInfo(upsertData);
 
@@ -121,6 +129,58 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
                 <Label htmlFor="canDonateMilk" className="cursor-pointer">
                   🍼 Puedo donar leche materna
                 </Label>
+              </div>
+
+              {/* Ubicacion */}
+              <div className="space-y-3">
+                <Label>Ubicación Geográfica</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={async () => {
+                    setGeoLoading(true);
+                    setError(null);
+                    try {
+                      const { getCurrentLocation } = await import("@/shared/services/geolocalization/geolocalization");
+                      const coords = await getCurrentLocation();
+                      setEditLatitude(coords.lat.toString());
+                      setEditLongitude(coords.lng.toString());
+                    } catch {
+                      setError("No se pudo obtener tu ubicación. Ingresa manualmente.");
+                    } finally {
+                      setGeoLoading(false);
+                    }
+                  }}
+                  disabled={geoLoading}
+                >
+                  {geoLoading ? "Obteniendo ubicación..." : "📍 Usar Mi Ubicación Actual"}
+                </Button>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="grid gap-2">
+                    <Label htmlFor="latitude">Latitud</Label>
+                    <Input
+                      id="latitude"
+                      type="number"
+                      step="0.0001"
+                      placeholder="10.3123"
+                      value={editLatitude}
+                      onChange={(e) => setEditLatitude(e.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="longitude">Longitud</Label>
+                    <Input
+                      id="longitude"
+                      type="number"
+                      step="0.0001"
+                      placeholder="-75.5234"
+                      value={editLongitude}
+                      onChange={(e) => setEditLongitude(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="grid gap-2">

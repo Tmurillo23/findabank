@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { BloodStockEditor, MilkStockEditor } from "@/features/banks/components";
 import { BankConfigTabKey } from "@/features/banks/types";
-import { getBankLocation, getBankProfile, updateBankProfileInfo, deleteBankProfileInfo } from "@/features/banks/services/bankProfileService";
+import {getBankProfile, updateBankProfileInfo, deleteBankProfileInfo } from "@/features/banks/services/bankProfileService";
 import { createClient } from "@/shared/services/supabase/client";
 
 export function BankUpdateForm() {
@@ -72,10 +72,11 @@ export function BankUpdateForm() {
           setEditDireccion(loadedAddress);
           setEditDescripcion(loadedDesc);
 
-          const coords = await getBankLocation(currentBankId);
-          if (coords) {
-            setEditLongitude(coords.lng.toString());
-            setEditLatitude(coords.lat.toString());
+          if (data?.latitude !== null && data?.latitude !== undefined) {
+            setEditLatitude(data.latitude.toString());
+          }
+          if (data?.longitude !== null && data?.longitude !== undefined) {
+            setEditLongitude(data.longitude.toString());
           }
         } catch (dbError: unknown) {
           if ((dbError as { code?: string })?.code !== "PGRST116") {
@@ -151,7 +152,7 @@ export function BankUpdateForm() {
                     setProfileError(null);
 
                     try {
-                      const updates: Record<string, string | undefined> = {
+                      const updates: Record<string, string | number | undefined> = {
                         nombre: editNombre,
                         tipo: bankType === "leche" ? "leche" : "sangre",
                         direccion: editDireccion,
@@ -159,7 +160,8 @@ export function BankUpdateForm() {
                       };
 
                       if (editLatitude && editLongitude) {
-                        updates.location = `POINT(${editLongitude} ${editLatitude})`;
+                        updates.latitude = parseFloat(editLatitude);
+                        updates.longitude = parseFloat(editLongitude);
                       } else if (!bankName) {
                         // Si es nuevo (bankName vacio) requiere location.
                         // Si ya tiene una en BD, no es necesaria enviarla de nuevo

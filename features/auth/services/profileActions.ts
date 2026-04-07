@@ -26,6 +26,8 @@ export async function createDonorProfile(input: CreateDonorProfileInput) {
       blood_type: input.blood_type,
       puede_donar_leche: input.puede_donar_leche,
       description: input.description,
+      latitude: input.latitude,
+      longitude: input.longitude,
       created_at: new Date().toISOString(),
     })
     .select()
@@ -64,7 +66,8 @@ export async function createBankProfile(input: CreateBankProfileInput) {
       tipo: tipoValue,
       descripcion: input.descripcion,
       direccion: input.direccion,
-      location: `POINT(${input.location.lng} ${input.location.lat})`,
+      latitude: input.location.lat,
+      longitude: input.location.lng,
       created_at: new Date().toISOString(),
     })
     .select()

@@ -55,10 +55,8 @@ export function DonorProfileForm({
         blood_type: bloodType,
         puede_donar_leche: canDonateMilk,
         description,
-        location: {
-          lat: parseFloat(latitude),
-          lng: parseFloat(longitude),
-        },
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude)
       });
 
       // Redirigir al dashboard de donante
