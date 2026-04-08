@@ -1,28 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { createCampaign, findDonorsByRadius } from "@/features/campaigns/services";
-import type { Campaign } from "@/features/campaigns/types";
+import { createCampaign } from "@/features/campaigns/services";
+import  {CampaignFormProps } from "@/features/campaigns/types";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 
-interface CampaignFormProps {
-  bankId: string;
-  onCampaignCreated: (campaign: Campaign) => void;
-}
 
-const RADIUS_OPTIONS = [1, 2, 5, 10, 20, 50];
 
 export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [ubicacion, setUbicacion] = useState("");
   const [fecha, setFecha] = useState("");
-  const [radioKm, setRadioKm] = useState("10");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [donorCount, setDonorCount] = useState<number | null>(null);
 
   const handleGetLocation = () => {
     if ("geolocation" in navigator) {
@@ -40,25 +33,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
     }
   };
 
-  const handleCheckDonors = async () => {
-    if (!latitude || !longitude || !radioKm) {
-      setError("Debes completar ubicación y radio");
-      return;
-    }
-
-    try {
-      setError(null);
-      const donors = await findDonorsByRadius(
-        parseFloat(latitude),
-        parseFloat(longitude),
-        parseFloat(radioKm)
-      );
-      setDonorCount(donors.length);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al buscar donantes");
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -66,6 +40,7 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
 
     try {
       // Validaciones
+
       if (!nombre.trim()) {
         setError("El nombre de la campaña es requerido");
         return;
@@ -81,6 +56,11 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
         return;
       }
 
+      if (!latitude || !longitude) {
+        setError("Debes completar ubicación y radio");
+        return;
+      }
+
       const newCampaign = await createCampaign({
         banco_id: bankId,
         nombre: nombre.trim(),
@@ -88,7 +68,7 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
         ubicacion: ubicacion.trim(),
         fecha,
       });
-
+  // Aquí sería que aparte de crear la campaña también llame a la función que se va a encargar e enviar los emails y se le pasaría  esa función el array de emails y otras cosas que dependerán del tipo de librería para enviar emails (si es con resend se le mandaría también el mensaje y el subject que sería el nombre de la campaña)
       // Limpiar formulario
       setNombre("");
       setDescripcion("");
@@ -96,8 +76,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
       setFecha("");
       setLatitude("");
       setLongitude("");
-      setRadioKm("10");
-      setDonorCount(null);
 
       onCampaignCreated(newCampaign);
     } catch (err) {
@@ -169,7 +147,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
 
           {/* Sección de Geolocalización */}
           <div className="border-t pt-6 space-y-4">
-            <h3 className="text-lg font-semibold">📍 Búsqueda de Donantes por Radio</h3>
 
             {/* Botón de Geolocalización */}
             <Button
@@ -178,45 +155,16 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
               onClick={handleGetLocation}
               className="w-full"
             >
+              {/*Aquí sería que esto se vea más bonito*/}
               {latitude && longitude
                 ? `📍 Ubicación: ${parseFloat(latitude).toFixed(4)}, ${parseFloat(longitude).toFixed(4)}`
                 : "📍 Obtener Mi Ubicación"}
             </Button>
 
-            {/* Radio de búsqueda */}
-            <div className="grid gap-2">
-              <Label htmlFor="radio">Radio de búsqueda (km)</Label>
-              <div className="flex gap-2 flex-wrap">
-                {RADIUS_OPTIONS.map((radius) => (
-                  <button
-                    key={radius}
-                    type="button"
-                    onClick={() => setRadioKm(radius.toString())}
-                    className={`px-4 py-2 rounded border transition ${
-                      radioKm === radius.toString()
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-blue-600"
-                    }`}
-                  >
-                    {radius} km
-                  </button>
-                ))}
-              </div>
+
             </div>
 
-            {/* Botón de buscar donantes */}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCheckDonors}
-              className="w-full"
-              disabled={!latitude || !longitude}
-            >
-              {donorCount !== null
-                ? `✅ ${donorCount} donante${donorCount !== 1 ? "s" : ""} encontrado${donorCount !== 1 ? "s" : ""}`
-                : "🔍 Buscar Donantes"}
-            </Button>
-          </div>
+
 
           {/* Mensaje de error */}
           {error && (

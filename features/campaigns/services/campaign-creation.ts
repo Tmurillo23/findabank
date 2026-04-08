@@ -1,48 +1,18 @@
 import { createClient } from "@/shared/services/supabase/client";
 import type { Campaign, CreateCampaignInput } from "@/features/campaigns/types";
 
-/**
- * Busca donantes dentro de un radio específico de una ubicación
- * @param latitude - Latitud del centro de búsqueda
- * @param longitude - Longitud del centro de búsqueda
- * @param radiusKm - Radio de búsqueda en kilómetros
- * @returns Array de donantes encontrados
- */
-export async function findDonorsByRadius(
-  latitude: number,
-  longitude: number,
-  radiusKm: number
-) {
-  const supabase = createClient();
-
-  // Usar la fórmula de haversine para calcular la distancia
-  // Retorna donantes dentro del radio especificado
-  const { data, error } = await supabase
-    .rpc("find_donors_by_radius", {
-      lat: latitude,
-      lng: longitude,
-      radius_km: radiusKm,
-    });
-
-  if (error) {
-    throw error;
-  }
-
-  return data || [];
-}
 
 /**
  * Obtiene los emails de los donantes encontrados
  * @param donorIds - Array de IDs de donantes
  * @returns Array de emails
  */
-export async function getDonorEmailsByIds(donorIds: string[]) {
+export async function getDonorEmails() {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from("donors")
     .select("correo")
-    .in("id", donorIds);
 
   if (error) {
     throw error;
@@ -114,42 +84,5 @@ export async function getCampaignById(campaignId: string) {
   return data as Campaign;
 }
 
-/**
- * Actualiza una campaña
- * @param campaignId - ID de la campaña
- * @param updates - Datos a actualizar
- * @returns La campaña actualizada
- */
-export async function updateCampaign(
-  campaignId: string,
-  updates: Partial<CreateCampaignInput>
-) {
-  const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("campana")
-    .update(updates)
-    .eq("id", campaignId)
-    .select()
-    .single();
 
-  if (error) {
-    throw error;
-  }
-
-  return data as Campaign;
-}
-
-/**
- * Elimina una campaña
- * @param campaignId - ID de la campaña
- */
-export async function deleteCampaign(campaignId: string) {
-  const supabase = createClient();
-
-  const { error } = await supabase.from("campana").delete().eq("id", campaignId);
-
-  if (error) {
-    throw error;
-  }
-}

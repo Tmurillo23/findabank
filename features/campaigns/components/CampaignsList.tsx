@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/shared/services/supabase/client";
-import { getBankCampaigns, deleteCampaign } from "@/features/campaigns/services";
+import { getBankCampaigns } from "@/features/campaigns/services";
 import type { Campaign } from "@/features/campaigns/types";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared";
 import { CampaignForm } from "./CampaignForm";
@@ -40,16 +40,6 @@ export function CampaignsList() {
     loadCampaigns();
   }, []);
 
-  const handleDeleteCampaign = async (campaignId: string) => {
-    if (!confirm("¿De verdad deseas eliminar esta campaña?")) return;
-
-    try {
-      await deleteCampaign(campaignId);
-      setCampaigns(campaigns.filter((c) => c.id !== campaignId));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al eliminar campaña");
-    }
-  };
 
   const handleCampaignCreated = (newCampaign: Campaign) => {
     setCampaigns([newCampaign, ...campaigns]);
@@ -124,24 +114,7 @@ export function CampaignsList() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex gap-3 justify-end">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          // TODO: Implementar edición
-                        }}
-                      >
-                        ✏️ Editar
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleDeleteCampaign(campaign.id)}
-                      >
-                        🗑️ Eliminar
-                      </Button>
-                    </div>
-                  </CardContent>
+
                 </Card>
               ))
             )}
