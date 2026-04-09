@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createCampaign } from "@/features/campaigns/services";
 import  {CampaignFormProps } from "@/features/campaigns/types";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
+import {getCurrentLocation} from "@/shared/services/geolocalization";
 
 
 
@@ -17,29 +18,21 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGetLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatitude(position.coords.latitude.toString());
-          setLongitude(position.coords.longitude.toString());
-        },
-        () => {
-          setError("No se pudo obtener tu ubicación");
-        }
-      );
-    } else {
-      setError("Geolocalización no disponible");
+  const handleGetLocation = async () => {
+    try {
+      const coords = await getCurrentLocation();
+      setLatitude(coords.lat.toString());
+      setLongitude(coords.lng.toString());
+    } catch {
+      setError("No se pudo obtener tu ubicación. Ingresa manualmente.");
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
 
     try {
-      // Validaciones
 
       if (!nombre.trim()) {
         setError("El nombre de la campaña es requerido");
