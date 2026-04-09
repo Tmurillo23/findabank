@@ -59,7 +59,7 @@ export function CampaignsList() {
       <div className="w-full max-w-4xl">
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold">📢 Mis Campañas</h1>
+            <h1 className="text-3xl font-bold"> Mis Campañas</h1>
             <Button
               onClick={() => setShowForm(!showForm)}
               className="bg-blue-600 hover:bg-blue-700"
@@ -106,10 +106,10 @@ export function CampaignsList() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-muted-foreground">
-                          📍 {campaign.ubicacion}
+                          {campaign.ubicacion}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          📅 {new Date(campaign.fecha).toLocaleDateString("es-ES")}
+                           {new Date(campaign.fecha).toLocaleDateString("es-ES")}
                         </p>
                       </div>
                     </div>

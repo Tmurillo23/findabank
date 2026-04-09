@@ -1,15 +1,25 @@
 import { createClient } from "@/shared/services/supabase/client";
+import {BankProfile, UpdateBankProfileInput} from "@/features/banks/types";
+
+export async function fetchBankData(bankId: string): Promise<BankProfile | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("banco")
+    .select("*")
+    .eq("id", bankId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    throw new Error("No se encontraron datos del banco");
+  }
+
+  return data as BankProfile | null;
+}
 
 export async function updateBankProfileInfo(
   bankId: string,
-  updates: {
-    nombre?: string;
-    tipo?: string;
-    direccion?: string;
-    descripcion?: string;
-    latitude?: string;
-    longitude?: string;
-  }
+  updates: UpdateBankProfileInput
 ) {
   const supabase = createClient();
 
@@ -27,14 +37,6 @@ export async function updateBankProfileInfo(
   if (updates.longitude !== undefined) payload.longitude = parseFloat(updates.longitude);
 
   const { error } = await supabase.from("banco").upsert(payload);
-  if (error) {
-    throw error;
-  }
-}
-
-export async function deleteBankProfileInfo(bankId: string) {
-  const supabase = createClient();
-  const { error } = await supabase.from("banco").delete().eq("id", bankId);
   if (error) {
     throw error;
   }

@@ -35,11 +35,11 @@ export interface BankProfile {
  */
 export interface UpdateBankProfileInput {
     nombre?: string;
-    tipo: BankType;
+    tipo?: string;
+    direccion?: string;
     descripcion?: string;
-    direccion: string;
-    latitude?: number;
-    longitude?: number;
+    latitude?: string;
+    longitude?: string;
 }
 
 

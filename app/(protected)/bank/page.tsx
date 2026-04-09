@@ -1,8 +1,10 @@
 "use client";
+//Crear una función: "Get Data Bank"
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
+import { fetchBankData } from "@/features/banks/services/bankProfileService";
 import { BloodStockDisplay, MilkStockDisplay } from "@/features/banks/components";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared";
 
@@ -23,7 +25,7 @@ export default function BankAdminDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBankData = async () => {
+    const fetchBankDataHandler = async () => {
       try {
         const supabase = createClient();
 
@@ -38,13 +40,9 @@ export default function BankAdminDashboard() {
         }
 
         // Obtener datos del banco
-        const { data, error: dbError } = await supabase
-          .from("banco")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+        const data = await fetchBankData(user.id);
 
-        if (dbError) {
+        if (!data) {
           setError("No se encontraron datos del banco");
           return;
         }
@@ -57,7 +55,7 @@ export default function BankAdminDashboard() {
       }
     };
 
-    fetchBankData();
+    fetchBankDataHandler();
   }, []);
 
   if (loading) {

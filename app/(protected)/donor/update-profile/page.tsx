@@ -1,7 +1,10 @@
 "use client";
 
+// Lo mismo aquí, crar la funcón para obtener la data de donantes
+
 import { useEffect, useState } from "react";
 import { createClient } from "@/shared/services/supabase/client";
+import { fetchDonorData } from "@/features/donors/services/donors";
 import { DonorUpdateForm } from "@/features/donors/components/DonorUpdateForm";
 import type { DonorProfile } from "@/features/donors/types";
 
@@ -11,7 +14,7 @@ export default function DonorUpdateProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDonorData = async () => {
+    const fetchDonorDataHandler = async () => {
       try {
         const supabase = createClient();
         const {
@@ -23,16 +26,7 @@ export default function DonorUpdateProfilePage() {
           return;
         }
 
-        const { data, error: dbError } = await supabase
-          .from("donors")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-
-        if (dbError && dbError.code !== "PGRST116") {
-          setError("No se encontraron datos del donante");
-          return;
-        }
+        const data = await fetchDonorData(user.id);
 
         if (!data) {
           setDonor({
@@ -47,7 +41,7 @@ export default function DonorUpdateProfilePage() {
             correo: user.email || "",
           });
         } else {
-          setDonor(data as DonorProfile);
+          setDonor(data);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error cargando datos");
@@ -56,7 +50,7 @@ export default function DonorUpdateProfilePage() {
       }
     };
 
-    fetchDonorData();
+    fetchDonorDataHandler();
   }, []);
 
   if (loading) {

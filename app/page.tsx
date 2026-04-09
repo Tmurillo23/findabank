@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AuthButton } from "@/features/auth";
+import {AuthButton, redirectByRole} from "@/features/auth";
 import { Suspense } from "react";
+import {Button} from "@/shared";
 
 export default function Home() {
   return (
@@ -9,13 +10,15 @@ export default function Home() {
         {/* Navbar */}
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <h1>FindaDonor</h1>
-            </div>
+
 
             {/* Auth Buttons */}
             <Suspense>
+              <div className="flex gap-5 items-center font-semibold">
+                <Button onClick={redirectByRole}>FindADonor</Button>
+              </div>
               <AuthButton />
+
             </Suspense>
           </div>
         </nav>

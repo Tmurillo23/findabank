@@ -56,7 +56,9 @@ export async function createBankProfile(input: UpdateBankProfileInput) {
   }
 
   // Mapear tipos a valores enum válidos en tu BD
-  const tipoValue = BANK_TYPE_MAP[input.tipo] || input.tipo;
+  const tipoValue = input.tipo && input.tipo in BANK_TYPE_MAP
+    ? BANK_TYPE_MAP[input.tipo as keyof typeof BANK_TYPE_MAP]
+    : input.tipo;
 
   const { data, error } = await supabase
     .from("banco")

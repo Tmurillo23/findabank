@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/shared/services/supabase/client";
+import { fetchDonorData } from "@/features/donors/services/donors";
 import { Card, CardContent, CardHeader, CardTitle, Button } from "@/shared";
 
 interface DonorData {
@@ -19,7 +20,7 @@ export default function DonorDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDonorData = async () => {
+    const fetchDonorDataHandler = async () => {
       try {
         const supabase = createClient();
 
@@ -34,13 +35,9 @@ export default function DonorDashboard() {
         }
 
         // Obtener datos del donante
-        const { data, error: dbError } = await supabase
-          .from("donors")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+        const data = await fetchDonorData(user.id);
 
-        if (dbError) {
+        if (!data) {
           setError("No se encontraron datos del donante");
           return;
         }
@@ -53,7 +50,7 @@ export default function DonorDashboard() {
       }
     };
 
-    fetchDonorData();
+    fetchDonorDataHandler();
   }, []);
 
   if (loading) {
@@ -77,7 +74,7 @@ export default function DonorDashboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold">👤 Mi Perfil de Donante</h1>
+          <h1 className="text-4xl font-bold"> Mi Perfil de Donante</h1>
           <p className="mt-2 text-muted-foreground">
             Bienvenido, {donor?.full_name}
           </p>
@@ -104,7 +101,7 @@ export default function DonorDashboard() {
                   Puedo donar leche materna?
                 </p>
                 <p className="text-lg font-semibold">
-                  {donor?.puede_donar_leche ? "✅ Sí" : "❌ No"}
+                  {donor?.puede_donar_leche ? "Sí" : "No"}
                 </p>
               </div>
               {donor?.description && (

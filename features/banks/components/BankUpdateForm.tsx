@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { BloodStockEditor, MilkStockEditor } from "@/features/banks/components";
 import { BankConfigTabKey } from "@/features/banks/types";
-import { updateBankProfileInfo,  } from "@/features/banks/services/bankProfileService";
+import { updateBankProfileInfo, fetchBankData } from "@/features/banks/services/bankProfileService";
 import { createClient } from "@/shared/services/supabase/client";
 
 export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "milk_bank" | null }) {
@@ -59,6 +59,16 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
           currentType = "leche";
         }
         setBankType(currentType);
+
+        // Cargar datos existentes del banco
+        const bankData = await fetchBankData(user.id);
+        if (bankData) {
+          setEditNombre(bankData.nombre || "");
+          setEditDireccion(bankData.direccion || "");
+          setEditDescripcion(bankData.descripcion || "");
+          setEditLatitude(bankData.latitude?.toString() || "");
+          setEditLongitude(bankData.longitude?.toString() || "");
+        }
 
       } catch (err) {
         setProfileError(err instanceof Error ? err.message : "Error al inicializar el formulario");
@@ -221,7 +231,7 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
                       }}
                       disabled={geoLoading}
                     >
-                      {geoLoading ? "Obteniendo ubicacion..." : "📍 Usar Mi Ubicacion Actual"}
+                      {geoLoading ? "Obteniendo ubicacion..." : "Usar Mi Ubicacion Actual"}
                     </Button>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -268,28 +278,7 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
                     <Button type="submit" className="flex-1" disabled={isSavingProfile}>
                       {isSavingProfile ? "Guardando..." : "Guardar Cambios"}
                     </Button>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                      disabled={isSavingProfile}
-                      onClick={async () => {
-                        if (confirm("¿De verdad deseas eliminar tu perfil de banco? Esta acción no se puede deshacer.")) {
-                          setIsSavingProfile(true);
-                          try {
-                            const { deleteBankProfileInfo } = await import("@/features/banks/services/bankProfileService");
-                            await deleteBankProfileInfo(bankId);
-                            alert("Perfil eliminado correctamente.");
-                            window.location.href = "/";
-                          } catch (err: unknown) {
-                            alert("Error al eliminar perfil: " + (err instanceof Error ? err.message : String(err)));
-                            setIsSavingProfile(false);
-                          }
-                        }
-                      }}
-                    >
-                      Eliminar Perfil
-                    </Button>
+
                   </div>
                 </form>
               </CardContent>

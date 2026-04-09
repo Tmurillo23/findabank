@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { updateDonorProfileInfo, deleteDonorProfileInfo } from "@/features/donors/services/donors";
+import { updateDonorProfileInfo } from "@/features/donors/services/donors";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 import { useRouter } from "next/navigation";
 import { cn } from "@/shared/services/utils";
@@ -13,6 +13,7 @@ interface DonorUpdateFormProps extends React.ComponentPropsWithoutRef<"div"> {
   initialData: DonorProfile;
 }
 
+// Arregrar lo de initial DATA
 export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdateFormProps) {
   const [fullName, setFullName] = useState(initialData.full_name || "");
   const [bloodType, setBloodType] = useState<BloodType>(initialData.blood_type || BLOOD_TYPES[0]);
@@ -31,7 +32,7 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
       getGeolocation();
     }
   }, []);
-
+// Arreglar esto. Llamar a geolocation
   const getGeolocation = () => {
     setGeoLoading(true);
     if ("geolocation" in navigator) {
@@ -86,22 +87,6 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm("¿De verdad deseas eliminar tu perfil de donante? Esta acción no se puede deshacer.")) {
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await deleteDonorProfileInfo(initialData.id);
-
-      alert("Perfil eliminado correctamente.");
-      window.location.href = "/";
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al eliminar perfil");
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -196,20 +181,13 @@ export function DonorUpdateForm({ initialData, className, ...props }: DonorUpdat
 
               {error && <p className="text-sm text-red-500">{error}</p>}
 
-              <div className="flex gap-4 pt-4">
-                <Button type="submit" className="flex-1" disabled={isLoading}>
-                  {isLoading ? "Guardando..." : "Guardar Cambios"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={handleDelete}
-                  disabled={isLoading}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                >
-                  Eliminar Perfil
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading}
+              >
+                {isLoading ? "Guardando..." : "💾 Guardar Perfil"}
+              </Button>
             </div>
           </form>
         </CardContent>

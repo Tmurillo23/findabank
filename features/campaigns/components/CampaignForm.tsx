@@ -150,8 +150,8 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
             >
               {/*Aquí sería que esto se vea más bonito*/}
               {latitude && longitude
-                ? `📍 Ubicación: ${parseFloat(latitude).toFixed(4)}, ${parseFloat(longitude).toFixed(4)}`
-                : "📍 Obtener Mi Ubicación"}
+                ? ` Ubicación: ${parseFloat(latitude).toFixed(4)}, ${parseFloat(longitude).toFixed(4)}`
+                : " Obtener Mi Ubicación"}
             </Button>
 
 
