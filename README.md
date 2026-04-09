@@ -1,14 +1,79 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# FindABank
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+Aplicación web para conectar bancos de sangre y leche materna con donantes.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
+## ✅ Funcionalidades Completas (Sin Base de Datos)
+
+¡La aplicación ahora funciona completamente **sin necesidad de base de datos externa**!
+
+### 🎯 Lo que funciona:
+
+- ✅ **Autenticación completa** (login/registro con Supabase Auth)
+- ✅ **Gestión de perfiles** de bancos y donantes
+- ✅ **Inventario de sangre y leche materna**
+- ✅ **Campañas de email** (simuladas, sin envío real)
+- ✅ **Almacenamiento local** de campañas con localStorage
+- ✅ **Envío simulado** de emails con datos de prueba
+
+### 🚀 Cómo usar:
+
+1. **Inicia la aplicación:**
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+2. **Regístrate o inicia sesión** como banco de sangre
+
+3. **Ve a "Gestión de Campañas"** y crea tu primera campaña
+
+4. **Elige cómo enviar:**
+   - **Por tipo de usuario:** Envía a donantes o bancos registrados
+   - **Emails específicos:** Ingresa emails manualmente
+
+5. **¡Los correos se envían realmente!** (usando Resend API)
+
+### 📧 Sistema de Correos:
+
+Los correos **NO son simulados** - se envían realmente usando **Resend API**:
+
+- **Envío real**: Los correos llegan a las bandejas de entrada
+- **Límite**: 100 emails gratis por mes
+- **Plantillas**: HTML responsive con diseño profesional
+- **Batching**: Maneja automáticamente lotes de 100 emails
+- **Fallback**: Si no hay usuarios en BD, usa datos de prueba
+
+### Probar envío de correos:
+
+```bash
+# Probar que Resend funciona
+npm run test-email
+```
+
+Asegúrate de cambiar el email de prueba en `test-email.js` por tu email real.
+
+### 💾 Almacenamiento:
+
+- **Campañas:** Funcionan con Supabase (cuando está configurado) o localStorage (como fallback)
+- **Persistencia:** Las campañas se mantienen tanto en BD como en navegador
+- **Multi-banco:** Cada usuario ve solo sus campañas
+- **Tipo de Banco:** Se puede cambiar entre sangre y leche en cualquier momento
+
+### 🔄 Funcionamiento Híbrido:
+
+- **Con BD configurada:** Campañas se guardan en Supabase (persistente entre dispositivos)
+- **Sin BD configurada:** Campañas se guardan en localStorage (solo en ese navegador)
+- **Transición suave:** Puedes configurar la BD después y las campañas existentes se mantienen
+
+### 🔧 Variables de Entorno Necesarias:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL="tu_supabase_url"
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="tu_clave_publica"
+RESEND_API_KEY="tu_resend_key_opcional"
+```
+
+¡**No necesitas configurar base de datos ni claves de servicio!**
   <a href="#demo"><strong>Demo</strong></a> ·
   <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
   <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·

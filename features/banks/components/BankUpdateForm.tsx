@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { BloodStockEditor, MilkStockEditor } from "@/features/banks/components";
 import { BankConfigTabKey } from "@/features/banks/types";
-import { getBankLocation, getBankProfile, updateBankProfileInfo, deleteBankProfileInfo } from "@/features/banks/services/bankProfileService";
+import { getBankProfile, updateBankProfileInfo, deleteBankProfileInfo } from "@/features/banks/services/bankProfileService";
 import { createClient } from "@/shared/services/supabase/client";
 
 export function BankUpdateForm() {
@@ -30,9 +30,6 @@ export function BankUpdateForm() {
   const [editNombre, setEditNombre] = useState("");
   const [editDireccion, setEditDireccion] = useState("");
   const [editDescripcion, setEditDescripcion] = useState("");
-  const [editLatitude, setEditLatitude] = useState("");
-  const [editLongitude, setEditLongitude] = useState("");
-  const [geoLoading, setGeoLoading] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
@@ -71,12 +68,6 @@ export function BankUpdateForm() {
           setEditNombre(loadedName);
           setEditDireccion(loadedAddress);
           setEditDescripcion(loadedDesc);
-
-          const coords = await getBankLocation(currentBankId);
-          if (coords) {
-            setEditLongitude(coords.lng.toString());
-            setEditLatitude(coords.lat.toString());
-          }
         } catch (dbError: unknown) {
           if ((dbError as { code?: string })?.code !== "PGRST116") {
             setProfileError("No se encontraron datos del banco");
@@ -151,6 +142,18 @@ export function BankUpdateForm() {
                     setProfileError(null);
 
                     try {
+                      // Obtener el usuario actual en el momento del submit
+                      const supabase = createClient();
+                      const { data: { user } } = await supabase.auth.getUser();
+                      
+                      if (!user || !user.id) {
+                        setProfileError("Error: No estás autenticado. Por favor, inicia sesión de nuevo.");
+                        setIsSavingProfile(false);
+                        return;
+                      }
+
+                      const currentBankId = user.id;
+
                       const updates: Record<string, string | undefined> = {
                         nombre: editNombre,
                         tipo: bankType === "leche" ? "leche" : "sangre",
@@ -158,22 +161,16 @@ export function BankUpdateForm() {
                         descripcion: editDescripcion,
                       };
 
-                      if (editLatitude && editLongitude) {
-                        updates.location = `POINT(${editLongitude} ${editLatitude})`;
-                      } else if (!bankName) {
-                        // Si es nuevo (bankName vacio) requiere location.
-                        // Si ya tiene una en BD, no es necesaria enviarla de nuevo
-                        setProfileError("La ubicación geográfica es requerida al crear el perfil.");
-                        setIsSavingProfile(false);
-                        return;
-                      }
+                      console.log("Current User ID:", currentBankId);
+                      console.log("Updating with:", updates);
+                      await updateBankProfileInfo(currentBankId, updates);
 
-                      await updateBankProfileInfo(bankId, updates);
-
-                      alert("Perfil actualizado correctamente.");
+                      alert("✅ Perfil actualizado correctamente.");
                       router.push("/bank");
                     } catch (err: unknown) {
-                      setProfileError(err instanceof Error ? err.message : "Error al actualizar perfil");
+                      const errorMsg = err instanceof Error ? err.message : String(err);
+                      console.error("Full error:", err);
+                      setProfileError(`Error: ${errorMsg}`);
                     } finally {
                       setIsSavingProfile(false);
                     }
@@ -191,13 +188,17 @@ export function BankUpdateForm() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="tipo">Tipo</Label>
-                    <Input
+                    <Label htmlFor="tipo">Tipo de Banco</Label>
+                    <select
                       id="tipo"
-                      type="text"
-                      value={bankType === "sangre" ? "Banco de Sangre" : "Banco de Leche"}
-                      disabled
-                    />
+                      value={bankType}
+                      onChange={(e) => setBankType(e.target.value as "sangre" | "leche")}
+                      className="mt-1 w-full rounded-md border bg-white px-3 py-2 dark:bg-slate-900"
+                      required
+                    >
+                      <option value="sangre">🩸 Banco de Sangre</option>
+                      <option value="leche">🥛 Banco de Leche Materna</option>
+                    </select>
                   </div>
 
                   <div className="grid gap-2">
@@ -212,59 +213,6 @@ export function BankUpdateForm() {
                     />
                   </div>
 
-                  {/* Ubicacion */}
-                  <div className="space-y-3">
-                    <Label>Ubicacion Geografica</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={async () => {
-                        setGeoLoading(true);
-                        setProfileError(null);
-                        try {
-                          const { getCurrentLocation } = await import("@/shared/services/geolocalization");
-                          const coords = await getCurrentLocation();
-                          setEditLatitude(coords.lat.toString());
-                          setEditLongitude(coords.lng.toString());
-                        } catch {
-                          setProfileError("No se pudo obtener tu ubicacion. Ingresa manualmente.");
-                        } finally {
-                          setGeoLoading(false);
-                        }
-                      }}
-                      disabled={geoLoading}
-                    >
-                      {geoLoading ? "Obteniendo ubicacion..." : "📍 Usar Mi Ubicacion Actual"}
-                    </Button>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="grid gap-2">
-                        <Label htmlFor="latitude">Latitud</Label>
-                        <Input
-                          id="latitude"
-                          type="number"
-                          step="0.0001"
-                          placeholder="10.3123"
-                          value={editLatitude}
-                          onChange={(e) => setEditLatitude(e.target.value)}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="longitude">Longitud</Label>
-                        <Input
-                          id="longitude"
-                          type="number"
-                          step="0.0001"
-                          placeholder="-75.5234"
-                          value={editLongitude}
-                          onChange={(e) => setEditLongitude(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Descripcion */}
                   <div className="grid gap-2">
                     <Label htmlFor="descripcion">Descripcion (Opcional)</Label>
                     <textarea

@@ -96,8 +96,8 @@ export default function BankAdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Stock Editor */}
           <div className="lg:col-span-2">
-            {isBloodBank && <BloodStockEditor />}
-            {isMilkBank && <MilkStockEditor />}
+            {isBloodBank && <BloodStockEditor readOnly={true} />}
+            {isMilkBank && <MilkStockEditor readOnly={true} />}
           </div>
 
           {/* Información del Banco */}
@@ -141,11 +141,14 @@ export default function BankAdminDashboard() {
                 >
                   ⚙ Configuración
                 </button>
-                <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
-                  Crear Campaña
+                <button
+                  onClick={() => router.push("/bank/campaigns")}
+                  className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                >
+                  📢 Gestionar Campañas
                 </button>
                 <button className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                  Ver Donantes
+                  👥 Ver Donantes
                 </button>
               </CardContent>
             </Card>
@@ -172,21 +175,21 @@ export default function BankAdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Campañas</CardTitle>
-              <CardDescription>Próximamente</CardDescription>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Crea y gestiona campañas de donación
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
               <CardTitle>Reportes</CardTitle>
               <CardDescription>Próximamente</CardDescription>
             </CardHeader>
             <CardContent className="text-muted-foreground">
               Estadísticas y análisis de donaciones
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Integraciones</CardTitle>
+              <CardDescription>Próximamente</CardDescription>
+            </CardHeader>
+            <CardContent className="text-muted-foreground">
+              Conecta con otros sistemas de salud
             </CardContent>
           </Card>
         </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Label } from "@/shared";
 import { upsertBloodStock, getBloodStock } from "@/features/banks/services/bankStockService";
+import { createClient } from "@/shared/services/supabase/client";
 import type { BloodStock } from "@/features/banks/types/bloodStock";
 
 const BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"] as const;
@@ -10,28 +11,83 @@ const STOCK_SITUATIONS = ["suficiente", "critico", "no_hay"] as const;
 
 interface BloodStockEditorProps {
   bancoId?: string;
+  readOnly?: boolean;
 }
 
-export function BloodStockEditor({ bancoId = "" }: BloodStockEditorProps) {
+export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockEditorProps) {
   const [stock, setStock] = useState<BloodStock[]>([]);
   const [selectedType, setSelectedType] = useState<(typeof BLOOD_TYPES)[number]>("O+");
-
-
   const [situation, setSituation] = useState<"suficiente" | "critico" | "no_hay">("suficiente");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentBankId, setCurrentBankId] = useState<string>("");
 
   useEffect(() => {
-    if (!bancoId) return;
-    getBloodStock(bancoId)
-      .then((data) => {
+    const fetchBankIdAndStock = async () => {
+      try {
+        let bankIdToUse = bancoId;
+
+        // Si no se pasó bancoId, obtener del usuario autenticado
+        if (!bankIdToUse) {
+          const supabase = createClient();
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user?.id) {
+            setError("Usuario no autenticado");
+            return;
+          }
+          bankIdToUse = user.id;
+        }
+
+        console.log('Using bankId:', bankIdToUse);
+        setCurrentBankId(bankIdToUse);
+
+        const data = await getBloodStock(bankIdToUse);
         setStock(data);
         const found = data.find((s) => s.tipo_sangre === "O+");
         setSituation(found?.situacion ?? "suficiente");
-      })
-      .catch(console.error);
+      } catch (err) {
+        console.error("Error loading stock:", err);
+        setError("Error cargando stock");
+      }
+    };
+
+    fetchBankIdAndStock();
   }, [bancoId]);
 
+  if (readOnly) {
+    // Vista de solo lectura para la página principal
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>🩸 Inventario de Sangre</CardTitle>
+          <CardDescription>Estado actual del stock de sangre</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {stock.length === 0 ? (
+              <p className="text-muted-foreground">No hay stock registrado</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {stock.map((item) => (
+                  <div key={item.tipo_sangre} className="p-3 border rounded">
+                    <div className="font-semibold">{item.tipo_sangre}</div>
+                    <div className={`text-sm ${
+                      item.situacion === 'suficiente' ? 'text-green-600' :
+                      item.situacion === 'critico' ? 'text-yellow-600' : 'text-red-600'
+                    }`}>
+                      {item.situacion.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Vista de edición para configuración
   return (
     <Card>
       <CardHeader>
@@ -82,7 +138,7 @@ export function BloodStockEditor({ bancoId = "" }: BloodStockEditorProps) {
 
         <Button
           onClick={async () => {
-            if (!bancoId) {
+            if (!currentBankId) {
               setError("No se encontró el ID del banco");
               return;
             }
@@ -92,7 +148,7 @@ export function BloodStockEditor({ bancoId = "" }: BloodStockEditorProps) {
 
             try {
               const updated = await upsertBloodStock({
-                banco_id: bancoId,
+                banco_id: currentBankId,
                 tipo_sangre: selectedType,
                 situacion: situation,
               });

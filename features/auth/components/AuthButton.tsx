@@ -1,11 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/shared";
-import { getAuthenticatedUser } from "@/features/auth/services/getUserAction";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { LogoutButton } from "./LogoutButton";
 
-export async function AuthButton() {
-  // Obtener usuario autenticado (lógica servidor)
-  const user = await getAuthenticatedUser();
+export function AuthButton() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
+    );
+  }
 
   return user ? (
     <div className="flex items-center gap-4">

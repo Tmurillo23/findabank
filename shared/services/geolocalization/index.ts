@@ -17,15 +17,36 @@ export function getCurrentLocation(): Promise<Coordinates> {
       return;
     }
 
+    // Timeout de 10 segundos
+    const timeoutId = setTimeout(() => {
+      reject(new Error("Timeout: No se pudo obtener la ubicación en 10 segundos"));
+    }, 10000);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        clearTimeout(timeoutId);
         resolve({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
       },
-      (error) => {
-        reject(error);
+      (error: GeolocationPositionError) => {
+        clearTimeout(timeoutId);
+        console.error('Geolocation error code:', error.code, 'message:', error.message);
+        
+        const errorMessages: Record<number, string> = {
+          1: "Permiso denegado. Por favor, habilita la geolocalización en tu navegador.",
+          2: "Posición no disponible. Intenta de nuevo o ingresa manualmente.",
+          3: "Tiempo agotado obteniendo ubicación. Intenta de nuevo.",
+        };
+        
+        const message = errorMessages[error.code] || `Error: ${error.message}`;
+        reject(new Error(message));
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 8000,
+        maximumAge: 0
       }
     );
   });

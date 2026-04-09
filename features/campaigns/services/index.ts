@@ -1,3 +1,2 @@
-// Servicios de campañas
-// Próximos: sendCampaign (Resend), getCampaignStats, etc.
-
+// Campaign services
+export { createCampaign, getBankCampaigns, getCampaign, sendCampaign } from './campaign-creation';
