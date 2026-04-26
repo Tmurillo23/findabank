@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/shared/services/supabase/client";
 import { fetchDonorData } from "@/features/donors/services/donors";
 import { Card, CardContent, CardHeader, CardTitle, Button } from "@/shared";
+import Link from "next/link";
 
 interface DonorData {
   id: string;
@@ -126,7 +127,9 @@ export default function DonorDashboard() {
               <CardTitle>Acciones</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full">Ver Bancos Cercanos</Button>
+              <Link href="/donor/nearby-banks">
+                <Button>Ver Bancos Cercanos</Button>
+              </Link>
               <Button variant="outline" className="w-full">
                 Ver Campañas
               </Button>
