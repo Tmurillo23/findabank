@@ -17,19 +17,7 @@ export async function fetchBankData(bankId: string): Promise<BankProfile | null>
   return data as BankProfile | null;
 }
 
-export async function updateBankProfileInfo(
-  bankId: string,
-  updates: UpdateBankProfileInput
-) {
-  const supabase = createClient();
-
-  if (error) {
-    throw error;
-  }
-  return data;
-}
-
-export async function updateBankProfileInfo(bankId: string, updates: { nombre?: string; tipo?: string; direccion?: string; descripcion?: string; location?: string }) {
+export async function updateBankProfileInfo(bankId: string, updates: UpdateBankProfileInput) {
   if (!bankId || bankId.trim() === "") {
     throw new Error("ID del banco no válido");
   }

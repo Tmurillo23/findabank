@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
 import { fetchDonorData } from "@/features/donors/services/donors";
 import { Card, CardContent, CardHeader, CardTitle, Button } from "@/shared";
-import Link from "next/link";
 
 interface DonorData {
   id: string;

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/shared";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { LogoutButton } from "./LogoutButton";
-import { createClient } from "@/shared/services/supabase/server";
 
 export function AuthButton() {
   const { user, loading } = useAuth();
@@ -14,6 +13,9 @@ export function AuthButton() {
       <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
     );
   }
+
+  const displayName =
+    user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "Usuario";
 
   return user ? (
     <div className="flex items-center gap-4">

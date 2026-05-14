@@ -53,15 +53,18 @@ export default function BankAdminDashboard() {
         }
 
         // Obtener datos del banco
-        const data = await fetchBankData(user.id);
+        const { data, error: dbError } = await supabase
+          .from("banco")
+          .select("*")
+          .eq("id", user.id)
+          .single();
 
-        if (dbError) {
-          // Si no hay datos del banco, redirigir a configuración inicial
+        if (dbError || !data) {
           router.push("/bank/setup");
           return;
         }
 
-        setBank(data);
+        setBank(data as BankData);
 
         // Fetch inicial de métricas y estadísticas
         await fetchDashboardData(user.id);
