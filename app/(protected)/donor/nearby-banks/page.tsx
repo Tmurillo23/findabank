@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Importamos para la navegación
+import { useRouter } from "next/navigation";
 import { getCurrentLocation, calculateDistance, Coordinates } from "@/shared/services/geolocalization/geolocalization";
 import { createClient } from "@/shared/services/supabase/client";
 import { BankProfile } from "@/features/banks/types/bank-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
-import { MapPin, Loader2, Droplets, Baby, ArrowLeft } from "lucide-react"; // Importamos ArrowLeft
+import { MapPin, Loader2, Droplets, Baby, ArrowLeft, SearchX } from "lucide-react"; 
 import Link from "next/link";
 
 export default function NearbyBanksPage() {
-  const router = useRouter(); // Inicializamos el router
+  const router = useRouter();
   const [banks, setBanks] = useState<(BankProfile & { distance: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,23 +46,23 @@ export default function NearbyBanksPage() {
 
         if (banksError) throw banksError;
 
-        const banksWithDistance = (banksData as BankProfile[]).map(bank => {
-          const lat = parseFloat(bank.latitude);
-          const lng = parseFloat(bank.longitude);
-          
-          const isValidCoord = !isNaN(lat) && !isNaN(lng);
-          const distance = isValidCoord 
-            ? calculateDistance(currentPos, { lat, lng }) 
-            : Infinity; 
-          
-          return {
-            ...bank,
-            distance
-          };
-        })
-        .sort((a, b) => a.distance - b.distance);
+        const processedBanks = (banksData as BankProfile[])
+          .map(bank => {
+            const lat = parseFloat(bank.latitude);
+            const lng = parseFloat(bank.longitude);
+            const isValidCoord = !isNaN(lat) && !isNaN(lng);
+            const distance = isValidCoord 
+              ? calculateDistance(currentPos, { lat, lng }) 
+              : Infinity; 
+            
+            return { ...bank, distance };
+          })
+          // --- CAMBIO SOLICITADO: FILTRO DE 20KM ---
+          .filter(bank => bank.distance <= 20) 
+          // ----------------------------------------
+          .sort((a, b) => a.distance - b.distance);
 
-        setBanks(banksWithDistance);
+        setBanks(processedBanks);
       } catch (err) {
         console.error("Error capturado:", err);
         const errorMessage = err instanceof Error ? err.message : "Error desconocido";
@@ -86,7 +86,6 @@ export default function NearbyBanksPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto flex flex-col gap-8">
-      {/* BOTÓN DE VOLVER */}
       <div className="flex items-center">
         <Button 
           variant="ghost" 
@@ -100,7 +99,7 @@ export default function NearbyBanksPage() {
 
       <header className="space-y-2 border-b pb-6">
         <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Bancos de Sangre y Leche</h1>
-        <p className="text-slate-500 text-lg">Localiza los puntos de atención más cercanos a tu posición actual.</p>
+        <p className="text-slate-500 text-lg">Mostrando puntos de atención en un radio de 20 km.</p>
       </header>
 
       {error && (
@@ -139,7 +138,7 @@ export default function NearbyBanksPage() {
                 <div className="flex flex-col">
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Distancia</span>
                   <span className="text-sm font-bold text-primary">
-                    {bank.distance === Infinity ? "Sin ubicación" : `${bank.distance.toFixed(2)} km`}
+                    {bank.distance.toFixed(2)} km
                   </span>
                 </div>
                 
@@ -155,8 +154,12 @@ export default function NearbyBanksPage() {
       </div>
 
       {banks.length === 0 && !error && (
-        <div className="text-center py-20 border-2 border-dashed rounded-2xl border-slate-200">
-          <p className="text-slate-400 font-medium">No se encontraron bancos en el sistema.</p>
+        <div className="text-center py-20 border-2 border-dashed rounded-2xl border-slate-200 flex flex-col items-center gap-4">
+          <SearchX className="text-slate-300" size={48} />
+          <div>
+            <p className="text-slate-500 font-bold">No hay bancos cerca de ti</p>
+            <p className="text-slate-400 text-sm">No encontramos puntos de atención en un radio de 20 km.</p>
+          </div>
         </div>
       )}
     </div>
