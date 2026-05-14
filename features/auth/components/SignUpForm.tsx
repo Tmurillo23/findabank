@@ -17,7 +17,6 @@ export function SignUpForm({
   const [role, setRole] = useState<UserRole>("donor");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -30,14 +29,14 @@ export function SignUpForm({
     }
 
     try {
-      // 1. Registrar usuario (lgica cliente) y redirigir
+      // 1. Registrar usuario (lógica cliente) y redirigir
       await signUpWithEmail(email, password, role);
 
-      // Si todo sale bien y confirmacin por email est desactivada:
+      // Redirigir inmediatamente a update-profile según el rol
       if (role === "donor") {
         window.location.href = "/donor/update-profile";
       } else if (role === "blood_bank" || role === "milk_bank") {
-        window.location.href = "/bank/update-profile";
+        window.location.href = `/bank/update-profile?role=${role}`;
       }
 
     } catch (error: unknown) {
@@ -76,7 +75,7 @@ export function SignUpForm({
                   id="role"
                   value={role}
                   onChange={(e) => setRole(e.target.value as UserRole)}
-                  className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="flex h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   required
                 >
                   <option value="donor">👤 Donante</option>

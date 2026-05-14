@@ -58,10 +58,8 @@ export function BankProfileForm({
         tipo: bankType,
         descripcion,
         direccion,
-        location: {
-          lat: parseFloat(latitude),
-          lng: parseFloat(longitude),
-        },
+        latitude: latitude,
+        longitude: longitude,
       });
 
       // Redirigir al dashboard del banco
@@ -124,7 +122,7 @@ export function BankProfileForm({
                   onClick={handleGetLocation}
                   disabled={geoLoading}
                 >
-                  {geoLoading ? "Obteniendo ubicación..." : "📍 Usar Mi Ubicación Actual"}
+                  {geoLoading ? "Obteniendo ubicación..." : " Usar Mi Ubicación Actual"}
                 </Button>
 
                 <div className="grid grid-cols-2 gap-3">

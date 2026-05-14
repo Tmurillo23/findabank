@@ -1,28 +1,27 @@
 import { createClient } from "@/shared/services/supabase/client";
+import {BankProfile, UpdateBankProfileInput} from "@/features/banks/types";
 
-export async function getBankLocation(bankId: string) {
+export async function fetchBankData(bankId: string): Promise<BankProfile | null> {
   const supabase = createClient();
-  const { data, error } = await supabase.from("banco").select("location").eq("id", bankId).single();
 
-  if (error) {
-    throw error;
+  const { data, error } = await supabase
+    .from("banco")
+    .select("*")
+    .eq("id", bankId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    throw new Error("No se encontraron datos del banco");
   }
 
-  if (data?.location) {
-    const match = data.location.match(/POINT\(([-0-9.]+) ([-0-9.]+)\)/);
-    if (match) {
-      return {
-        lng: match[1],
-        lat: match[2],
-      };
-    }
-  }
-  return null;
+  return data as BankProfile | null;
 }
 
-export async function getBankProfile(bankId: string) {
+export async function updateBankProfileInfo(
+  bankId: string,
+  updates: UpdateBankProfileInput
+) {
   const supabase = createClient();
-  const { data, error } = await supabase.from("banco").select("*").eq("id", bankId).single();
 
   if (error) {
     throw error;
@@ -67,13 +66,5 @@ export async function updateBankProfileInfo(bankId: string, updates: { nombre?: 
   } catch (error: any) {
     console.error("Strategy error:", error);
     throw new Error(`Error actualizando banco: ${error.message || error}`);
-  }
-}
-
-export async function deleteBankProfileInfo(bankId: string) {
-  const supabase = createClient();
-  const { error } = await supabase.from("banco").delete().eq("id", bankId);
-  if (error) {
-    throw error;
   }
 }

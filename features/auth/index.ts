@@ -8,7 +8,7 @@ export type { UserProfile, UserRole } from './types';
 export type { DonorProfile, CreateDonorProfileInput } from '@/features/donors/types';
 
 // Tipos de bancos
-export type { BankProfile, BankType, CreateBankProfileInput, Location } from '@/features/banks/types';
+export type { BankProfile, BankType, UpdateBankProfileInput } from '@/features/banks/types';
 
 // Tipos de stock
 export type { BloodStock } from '@/features/banks/types/bloodStock';

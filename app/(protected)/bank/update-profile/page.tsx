@@ -2,8 +2,12 @@
 
 import Link from "next/link";
 import { BankUpdateForm } from "@/features/banks/components";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function BankUpdateProfilePage() {
+function BankUpdateProfileContent() {
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role");
 
   return (
     <div className="min-h-screen relative p-4 flex items-start justify-center pt-10">
@@ -22,3 +26,12 @@ export default function BankUpdateProfilePage() {
     </div>
   );
 }
+
+export default function BankUpdateProfilePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Cargando...</div>}>
+      <BankUpdateProfileContent />
+    </Suspense>
+  );
+}
+

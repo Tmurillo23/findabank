@@ -1,4 +1,5 @@
 "use client";
+//Crear una función: "Get Data Bank"
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -37,7 +38,7 @@ export default function BankAdminDashboard() {
   const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchBankData = async () => {
+    const fetchBankDataHandler = async () => {
       try {
         const supabase = createClient();
 
@@ -52,11 +53,7 @@ export default function BankAdminDashboard() {
         }
 
         // Obtener datos del banco
-        const { data, error: dbError } = await supabase
-          .from("banco")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+        const data = await fetchBankData(user.id);
 
         if (dbError) {
           // Si no hay datos del banco, redirigir a configuración inicial
@@ -76,7 +73,7 @@ export default function BankAdminDashboard() {
       }
     };
 
-    fetchBankData();
+    fetchBankDataHandler();
   }, []);
 
   const fetchDashboardData = async (bancoId: string) => {
@@ -168,7 +165,7 @@ export default function BankAdminDashboard() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-4xl font-bold">
-            {isBloodBank ? "🩸 Mi Banco de Sangre" : "🥛 Mi Banco de Leche"}
+            {isBloodBank ? `Mi Banco de Sangre ${bank?.nombre}` : `🥛 Mi Banco de Leche ${bank?.nombre}`}
           </h1>
           <p className="mt-2 text-muted-foreground">
             Bienvenido a {bank?.nombre}
@@ -219,7 +216,7 @@ export default function BankAdminDashboard() {
 
         {/* Grid de contenido */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Stock Editor */}
+          {/* Stock Display */}
           <div className="lg:col-span-2">
             {isBloodBank && <BloodStockEditor readOnly={true} />}
             {isMilkBank && <MilkStockEditor readOnly={true} />}

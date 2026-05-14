@@ -16,12 +16,12 @@ import { BankConfigTabKey } from "@/features/banks/types";
 import { getBankProfile, updateBankProfileInfo, deleteBankProfileInfo } from "@/features/banks/services/bankProfileService";
 import { createClient } from "@/shared/services/supabase/client";
 
-export function BankUpdateForm() {
+export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "milk_bank" | null }) {
   const router = useRouter();
 
   const [bankId, setBankId] = useState<string>("");
-  const [bankName, setBankName] = useState<string>("");
-  const [bankType, setBankType] = useState<"sangre" | "leche">("sangre");
+  const [bankName] = useState<string>("");
+  const [bankType, setBankType] = useState<"sangre" | "leche">(initialRole === "milk_bank" ? "leche" : "sangre");
 
   const [activeTab, setActiveTab] = useState<BankConfigTabKey>("perfil");
   const [loadingConfig, setLoadingConfig] = useState(true);
@@ -34,7 +34,7 @@ export function BankUpdateForm() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
-    const fetchBankData = async () => {
+    const initializeBankForm = async () => {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -45,14 +45,17 @@ export function BankUpdateForm() {
           return;
         }
 
-        try {
-          const data = await getBankProfile(user.id);
-          const currentBankId = user.id;
-          const currentType = (user.user_metadata?.role === "milk_bank" ? "leche" : "sangre");
+        // Establecer el ID del banco
+        setBankId(user.id);
 
-          let loadedName = "";
-          let loadedAddress = "";
-          let loadedDesc = "";
+        // Determinar el tipo de banco
+        let currentType: "sangre" | "leche" = "sangre";
+        if (initialRole === "milk_bank") {
+          currentType = "leche";
+        } else if (user.user_metadata?.role === "milk_bank") {
+          currentType = "leche";
+        }
+        setBankType(currentType);
 
           if (data) {
             loadedName = data.nombre || "";
@@ -77,14 +80,14 @@ export function BankUpdateForm() {
         }
 
       } catch (err) {
-        setProfileError(err instanceof Error ? err.message : "Error cargando datos");
+        setProfileError(err instanceof Error ? err.message : "Error al inicializar el formulario");
       } finally {
         setLoadingConfig(false);
       }
     };
 
-    fetchBankData();
-  }, []);
+    initializeBankForm();
+  }, [initialRole]);
 
 
 
@@ -230,27 +233,7 @@ export function BankUpdateForm() {
                     <Button type="submit" className="flex-1" disabled={isSavingProfile}>
                       {isSavingProfile ? "Guardando..." : "Guardar Cambios"}
                     </Button>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                      disabled={isSavingProfile}
-                      onClick={async () => {
-                        if (confirm("De verdad deseas eliminar tu perfil de banco? Esta accion no se puede deshacer.")) {
-                          setIsSavingProfile(true);
-                          try {
-                            await deleteBankProfileInfo(bankId);
-                            alert("Perfil eliminado correctamente.");
-                            window.location.href = "/";
-                          } catch (err: unknown) {
-                            alert("Error al eliminar perfil: " + (err instanceof Error ? err.message : String(err)));
-                            setIsSavingProfile(false);
-                          }
-                        }
-                      }}
-                    >
-                      Eliminar Perfil
-                    </Button>
+
                   </div>
                 </form>
               </CardContent>

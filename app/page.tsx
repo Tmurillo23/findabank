@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AuthButton } from "@/features/auth";
+import {AuthButton, redirectByRole} from "@/features/auth";
 import { Suspense } from "react";
+import {Button} from "@/shared";
 
 export default function Home() {
   return (

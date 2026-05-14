@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
+import { fetchDonorData } from "@/features/donors/services/donors";
 import { Card, CardContent, CardHeader, CardTitle, Button } from "@/shared";
+import Link from "next/link";
 
 interface DonorData {
   id: string;
@@ -24,7 +26,7 @@ export default function DonorDashboard() {
   const isProfileComplete = Boolean(donor?.full_name && donor?.blood_type);
 
   useEffect(() => {
-    const fetchDonorData = async () => {
+    const fetchDonorDataHandler = async () => {
       try {
         const supabase = createClient();
 
@@ -39,13 +41,9 @@ export default function DonorDashboard() {
         }
 
         // Obtener datos del donante
-        const { data, error: dbError } = await supabase
-          .from("donors")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+        const data = await fetchDonorData(user.id);
 
-        if (dbError) {
+        if (!data) {
           setError("No se encontraron datos del donante");
           return;
         }
@@ -58,7 +56,7 @@ export default function DonorDashboard() {
       }
     };
 
-    fetchDonorData();
+    fetchDonorDataHandler();
   }, []);
 
   if (loading) {
@@ -148,7 +146,7 @@ export default function DonorDashboard() {
                   Puedo donar leche materna?
                 </p>
                 <p className="text-lg font-semibold">
-                  {donor?.puede_donar_leche ? "✅ Sí" : "❌ No"}
+                  {donor?.puede_donar_leche ? "Sí" : "No"}
                 </p>
               </div>
               {donor?.description && (

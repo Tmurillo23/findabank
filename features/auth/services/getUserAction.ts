@@ -2,9 +2,7 @@
 
 import { createClient } from "@/shared/services/supabase/server";
 
-/**
- * Server action: Obtener datos del usuario autenticado
- */
+
 export async function getAuthenticatedUser() {
   const supabase = await createClient();
 

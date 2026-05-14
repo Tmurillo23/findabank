@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/shared";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { LogoutButton } from "./LogoutButton";
+import { createClient } from "@/shared/services/supabase/server";
 
 export function AuthButton() {
   const { user, loading } = useAuth();
@@ -16,19 +17,19 @@ export function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+      <span className="font-medium text-slate-700">
+        Hey, {displayName}!
+      </span>
       <LogoutButton />
     </div>
   ) : (
     <div className="flex gap-2">
       <Button asChild size="sm" variant={"outline"}>
-        <Link href="/login">Sign in</Link>
+        <Link className="px-4 py-2" href="/login">Sign in</Link>
       </Button>
       <Button asChild size="sm" variant={"default"}>
-        <Link href="/sign-up">Sign up</Link>
+        <Link className="px-4 py-2" href="/sign-up">Sign up</Link>
       </Button>
     </div>
   );
 }
-
-
