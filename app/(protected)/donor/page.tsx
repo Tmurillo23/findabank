@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
@@ -182,14 +181,14 @@ export default function DonorDashboard() {
                 className="w-full bg-green-600 hover:bg-green-700"
                 onClick={() => router.push("/donor/update-profile")}
               >
-                 Editar Perfil
+                Editar Perfil
               </Button>
-              <Link
-                href="/donor/find-banks"
-                className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700"
+                onClick={() => router.push("/donor/nearby-banks")}
               >
                 Buscar Bancos
-              </Link>
+              </Button>
               <Button
                 variant="outline"
                 className="w-full"
