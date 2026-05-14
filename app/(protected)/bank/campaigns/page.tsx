@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/shared/services/supabase/client';
@@ -15,6 +16,17 @@ export default function CampaignsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [bankId, setBankId] = useState<string | null>(null);
+  const [noBank, setNoBank] = useState(false);
+
+  useEffect(() => {
+    if (!noBank) return;
+
+    const timer = setTimeout(() => {
+      router.push('/bank/setup');
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, [noBank, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +44,19 @@ export default function CampaignsDashboard() {
         }
 
         setBankId(user.id);
+
+        // Verificar si el banco está configurado
+        const { data: bancoData, error: bancoError } = await supabase
+          .from('banco')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (bancoError || !bancoData) {
+          setNoBank(true);
+          setLoading(false);
+          return;
+        }
 
         // Obtener campañas del banco
         const bankCampaigns = await getBankCampaigns(user.id);
@@ -78,6 +103,38 @@ export default function CampaignsDashboard() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p>Cargando campañas...</p>
+      </div>
+    );
+  }
+
+  if (noBank) {
+    return (
+      <div className="flex-1 w-full flex items-center justify-center p-6">
+        <div className="w-full max-w-xl">
+          <div className="rounded-2xl border border-yellow-300 bg-yellow-50 p-6">
+            <h1 className="text-2xl font-bold text-yellow-900">Tu banco no está configurado</h1>
+            <p className="mt-3 text-sm text-yellow-800">
+              Para crear campañas necesitas completar la información de tu banco.
+            </p>
+            <p className="mt-3 text-sm text-yellow-700">
+              Te llevaremos a la configuración en 8 segundos o puedes ir ahora mismo.
+            </p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => router.push('/bank/setup')}
+                className="inline-flex items-center justify-center rounded-lg bg-yellow-600 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-700 transition"
+              >
+                Ir a configuración del banco
+              </button>
+              <Link
+                href="/bank"
+                className="inline-flex items-center justify-center rounded-lg border border-yellow-600 px-4 py-2 text-sm font-semibold text-yellow-700 hover:bg-yellow-100 transition"
+              >
+                Volver al Dashboard
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

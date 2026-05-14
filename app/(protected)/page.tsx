@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared";
@@ -50,12 +51,12 @@ export default async function ProtectedPage() {
               <p className="text-sm text-gray-600 mb-4">
                 Acceso para administradores de bancos. Crea campañas, maneja stocks y contacta donantes.
               </p>
-              <button
-                onClick={() => (window.location.href = "/bank")}
-                className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              <Link
+                href="/bank"
+                className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
               >
                 Ir al Dashboard de Banco
-              </button>
+              </Link>
             </CardContent>
           </Card>
 
@@ -70,12 +71,12 @@ export default async function ProtectedPage() {
               <p className="text-sm text-gray-600 mb-4">
                 Acceso para donantes. Actualiza tu perfil, busca bancos cercanos y recibe campañas.
               </p>
-              <button
-                onClick={() => (window.location.href = "/donor")}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              <Link
+                href="/donor"
+                className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
               >
                 Ir al Dashboard de Donante
-              </button>
+              </Link>
             </CardContent>
           </Card>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
@@ -20,6 +21,7 @@ export default function DonorDashboard() {
   const [donor, setDonor] = useState<DonorData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isProfileComplete = Boolean(donor?.full_name && donor?.blood_type);
 
   useEffect(() => {
     const fetchDonorData = async () => {
@@ -79,11 +81,50 @@ export default function DonorDashboard() {
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-4xl font-bold">👤 Mi Perfil de Donante</h1>
           <p className="mt-2 text-muted-foreground">
             Bienvenido, {donor?.full_name}
           </p>
+        </div>
+
+        {!isProfileComplete && (
+          <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4 mb-6 text-orange-900">
+            <p className="font-semibold">Tu perfil está incompleto</p>
+            <p className="text-sm mt-1">
+              Completa tu información para recibir campañas más adecuadas y mejorar tus oportunidades de donación.
+            </p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Card className="border-blue-100 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="text-base">Perfil</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{isProfileComplete ? 'Completo' : 'Incompleto'}</p>
+              <p className="text-sm text-muted-foreground mt-2">Actualiza tu información</p>
+            </CardContent>
+          </Card>
+          <Card className="border-green-100 bg-green-50">
+            <CardHeader>
+              <CardTitle className="text-base">Sangre</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{donor?.blood_type || '-'}</p>
+              <p className="text-sm text-muted-foreground mt-2">Tipo de sangre registrado</p>
+            </CardContent>
+          </Card>
+          <Card className={`border ${donor?.puede_donar_leche ? 'border-green-100 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+            <CardHeader>
+              <CardTitle className="text-base">Leche</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{donor?.puede_donar_leche ? 'Sí' : 'No'}</p>
+              <p className="text-sm text-muted-foreground mt-2">Donación de leche</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Grid de contenido */}
@@ -140,25 +181,24 @@ export default function DonorDashboard() {
               <CardTitle>Acciones Rápidas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button 
+              <Button
                 className="w-full bg-green-600 hover:bg-green-700"
-                onClick={() => router.push("/donor/find-banks")}
+                onClick={() => router.push("/donor/update-profile")}
               >
-                🔍 Buscar Bancos
+                ✏️ Editar Perfil
               </Button>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => router.push("/donor/campaigns")}
+              <Link
+                href="/donor/find-banks"
+                className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
               >
-                📢 Ver Campañas
-              </Button>
-              <Button 
-                variant="outline" 
+                🔎 Buscar Bancos
+              </Link>
+              <Button
+                variant="outline"
                 className="w-full"
-                onClick={() => router.push("/donor/history")}
+                onClick={() => router.push("/")}
               >
-                📋 Mi Historial
+                🏠 Volver al Inicio
               </Button>
             </CardContent>
           </Card>
