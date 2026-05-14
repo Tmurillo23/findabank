@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
 import { getCurrentLocation, calculateDistance, Coordinates } from "@/shared/services/geolocalization/geolocalization";
 import { BankProfile } from "@/features/banks/types/bank-types"; // Importamos el tipo real
@@ -9,8 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { MapPin, ArrowLeft, Loader2, Droplets, Baby, Info } from "lucide-react";
 
-export default function BankPublicProfilePage() {
-  const { id } = useParams();
+function BankProfileClient({ bankId }: { bankId: string }) {
   const router = useRouter();
   
   // Cambiamos 'any' por el tipo BankProfile para quitar el error de ESLint
@@ -26,7 +25,7 @@ export default function BankPublicProfilePage() {
         const { data, error } = await supabase
           .from("banco")
           .select("*")
-          .eq("id", id)
+          .eq("id", bankId)
           .single();
 
         if (error) throw error;
@@ -49,7 +48,7 @@ export default function BankPublicProfilePage() {
       }
     }
     loadBankData();
-  }, [id]);
+  }, [bankId]);
 
   if (loading) return (
     <div className="flex h-screen items-center justify-center">
@@ -134,4 +133,8 @@ export default function BankPublicProfilePage() {
       </Card>
     </div>
   );
+}
+
+export default function BankPublicProfilePage({ params }: { params: { id: string } }) {
+  return <BankProfileClient bankId={params.id} />;
 }

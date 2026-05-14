@@ -41,8 +41,17 @@ export function CampaignsList() {
   }, []);
 
 
-  const handleCampaignCreated = (newCampaign: Campaign) => {
-    setCampaigns([newCampaign, ...campaigns]);
+  const handleCampaignCreated = () => {
+    // Reload campaigns after creation
+    const loadCampaigns = async () => {
+      try {
+        const campaignsData = await getBankCampaigns(bankId);
+        setCampaigns(campaignsData);
+      } catch (err) {
+        console.error("Error reloading campaigns:", err);
+      }
+    };
+    loadCampaigns();
     setShowForm(false);
   };
 
@@ -71,7 +80,7 @@ export function CampaignsList() {
           {/* Formulario desplegable */}
           {showForm && (
             <div className="mb-8 animate-in fade-in slide-in-from-top-2">
-              <CampaignForm bankId={bankId} onCampaignCreated={handleCampaignCreated} />
+              <CampaignForm bankId={bankId} onSuccess={handleCampaignCreated} />
             </div>
           )}
 
@@ -106,10 +115,7 @@ export function CampaignsList() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-muted-foreground">
-                          {campaign.ubicacion}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                           {new Date(campaign.fecha).toLocaleDateString("es-ES")}
+                           {new Date(campaign.created_at).toLocaleDateString("es-ES")}
                         </p>
                       </div>
                     </div>

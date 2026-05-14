@@ -20,7 +20,7 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
   const router = useRouter();
 
   const [bankId, setBankId] = useState<string>("");
-  const [bankName] = useState<string>("");
+  const [bankName, setBankName] = useState<string>("");
   const [bankType, setBankType] = useState<"sangre" | "leche">(initialRole === "milk_bank" ? "leche" : "sangre");
 
   const [activeTab, setActiveTab] = useState<BankConfigTabKey>("perfil");
@@ -63,6 +63,7 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
         // Cargar datos existentes del banco
         const bankData = await fetchBankData(user.id);
         if (bankData) {
+          setBankName(bankData.nombre || "");
           setEditNombre(bankData.nombre || "");
           setEditDireccion(bankData.direccion || "");
           setEditDescripcion(bankData.descripcion || "");
