@@ -4,9 +4,7 @@ import { createClient } from "@/shared/services/supabase/server";
 import { UpdateDonorProfileInput } from "@/features/donors/types";
 import { UpdateBankProfileInput, BANK_TYPE_MAP } from "@/features/banks/types";
 
-/**
- * Crear perfil de donante en tabla 'donors'
- */
+
 export async function createDonorProfile(input: UpdateDonorProfileInput) {
   const supabase = await createClient();
 
@@ -41,9 +39,7 @@ export async function createDonorProfile(input: UpdateDonorProfileInput) {
   return data;
 }
 
-/**
- * Crear perfil de banco en tabla 'banco'
- */
+
 export async function createBankProfile(input: UpdateBankProfileInput) {
   const supabase = await createClient();
 
@@ -55,7 +51,6 @@ export async function createBankProfile(input: UpdateBankProfileInput) {
     throw new Error("No authenticated user");
   }
 
-  // Mapear tipos a valores enum válidos en tu BD
   const tipoValue = input.tipo && input.tipo in BANK_TYPE_MAP
     ? BANK_TYPE_MAP[input.tipo as keyof typeof BANK_TYPE_MAP]
     : input.tipo;

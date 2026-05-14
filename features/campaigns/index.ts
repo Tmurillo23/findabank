@@ -1,10 +1,8 @@
 // Componentes de Campañas
-export { CampaignForm, CampaignList, CampaignSender } from './components';
+export { CampaignForm, CampaignsList } from './components';
 
 // Servicios
-export { createCampaign, getBankCampaigns, getCampaign, sendCampaign } from './services';
+export { createCampaign, getBankCampaigns} from './services';
 
-// Tipos
-export type { Campaign, CreateCampaignInput, SendCampaignInput, UserType } from './types';
-export { PREDEFINED_RADIUS } from './types';
+
 

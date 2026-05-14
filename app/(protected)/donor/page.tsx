@@ -79,7 +79,7 @@ export default function DonorDashboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-4xl font-bold">👤 Mi Perfil de Donante</h1>
+          <h1 className="text-4xl font-bold">Mi Perfil de Donante</h1>
           <p className="mt-2 text-muted-foreground">
             Bienvenido, {donor?.full_name}
           </p>
@@ -182,20 +182,20 @@ export default function DonorDashboard() {
                 className="w-full bg-green-600 hover:bg-green-700"
                 onClick={() => router.push("/donor/update-profile")}
               >
-                ✏️ Editar Perfil
+                 Editar Perfil
               </Button>
               <Link
                 href="/donor/find-banks"
                 className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
               >
-                🔎 Buscar Bancos
+                Buscar Bancos
               </Link>
               <Button
                 variant="outline"
                 className="w-full"
                 onClick={() => router.push("/")}
               >
-                🏠 Volver al Inicio
+                Volver al Inicio
               </Button>
             </CardContent>
           </Card>
@@ -225,7 +225,7 @@ export default function DonorDashboard() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                  <p className="text-sm text-red-700 font-semibold">🩸 Donación de Sangre</p>
+                  <p className="text-sm text-red-700 font-semibold">Donación de Sangre</p>
                   <p className="text-xs text-red-600 mt-1">
                     Tipo: <span className="font-semibold">{donor?.blood_type}</span>
                   </p>
@@ -241,7 +241,7 @@ export default function DonorDashboard() {
                   <p className={`text-sm font-semibold ${
                     donor?.puede_donar_leche ? 'text-blue-700' : 'text-gray-700'
                   }`}>
-                    {donor?.puede_donar_leche ? '🥛 Donación de Leche' : '🚫 No Puede Donar Leche'}
+                    {donor?.puede_donar_leche ? 'Donación de Leche' : 'No Puede Donar Leche'}
                   </p>
                   <p className={`text-xs mt-2 ${
                     donor?.puede_donar_leche ? 'text-blue-600' : 'text-gray-600'

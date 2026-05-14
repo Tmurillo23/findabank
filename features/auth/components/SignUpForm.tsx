@@ -29,10 +29,8 @@ export function SignUpForm({
     }
 
     try {
-      // 1. Registrar usuario (lógica cliente) y redirigir
       await signUpWithEmail(email, password, role);
 
-      // Redirigir inmediatamente a update-profile según el rol
       if (role === "donor") {
         window.location.href = "/donor/update-profile";
       } else if (role === "blood_bank" || role === "milk_bank") {
@@ -68,7 +66,6 @@ export function SignUpForm({
                 />
               </div>
 
-              {/* Selector de Rol */}
               <div className="grid gap-2">
                 <Label htmlFor="role">¿Qué tipo de cuenta deseas?</Label>
                 <select

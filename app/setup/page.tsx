@@ -49,7 +49,7 @@ export default function SetupPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Configuración Requerida</h3>
+            <h3 className="font-semibold text-yellow-800 mb-2"> Configuración Requerida</h3>
             <p className="text-yellow-700 text-sm mb-3">
               Para que las campañas funcionen, necesitas configurar la base de datos.
               Asegúrate de tener la <code className="bg-yellow-100 px-1 rounded">SUPABASE_SERVICE_ROLE_KEY</code> en tu archivo <code className="bg-yellow-100 px-1 rounded">.env.local</code>.
@@ -78,7 +78,7 @@ export default function SetupPage() {
 
           {result && (
             <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded">
-              <p className="font-semibold">✅ Configuración exitosa!</p>
+              <p className="font-semibold">Configuración exitosa!</p>
               <p>{result.message}</p>
               {result.tables_created && (
                 <p className="text-sm mt-2">Tablas creadas: {result.tables_created.join(', ')}</p>

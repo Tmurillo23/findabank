@@ -26,7 +26,6 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
   const [activeTab, setActiveTab] = useState<BankConfigTabKey>("perfil");
   const [loadingConfig, setLoadingConfig] = useState(true);
 
-  // Estados para edicion de perfil
   const [editNombre, setEditNombre] = useState("");
   const [editDireccion, setEditDireccion] = useState("");
   const [editDescripcion, setEditDescripcion] = useState("");

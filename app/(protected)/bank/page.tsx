@@ -1,12 +1,11 @@
 "use client";
-//Crear una función: "Get Data Bank"
+// PERO COMO PONEN LÓGICA EN EL FRONT END SI ESO DEBERÍA DE ESTAR EN LOS SERVIOS???? AQUÍ NO SE DEBERÍAN HACER LLAMADAS A LA BASE DE DATOS!
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
 import { BloodStockEditor, MilkStockEditor, ActivityTimeline, CampaignStatistics } from "@/features/banks/components";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from "@/shared";
-import { Badge } from "@/shared/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, Button } from "@/shared";
 
 interface BankData {
   id: string;
@@ -105,13 +104,11 @@ export default function BankAdminDashboard() {
     }
   };
 
-  // Subscriptions para actualizaciones en tiempo real
   useEffect(() => {
     if (!bank) return;
 
     const supabase = createClient();
 
-    // Subscription para campañas
     const campaignChannel = supabase
       .channel('campaign_changes')
       .on('postgres_changes', {
@@ -124,7 +121,6 @@ export default function BankAdminDashboard() {
       })
       .subscribe();
 
-    // Subscription para stock
     const stockChannel = supabase
       .channel('stock_changes')
       .on('postgres_changes', {
@@ -168,7 +164,7 @@ export default function BankAdminDashboard() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-4xl font-bold">
-            {isBloodBank ? `Mi Banco de Sangre ${bank?.nombre}` : `🥛 Mi Banco de Leche ${bank?.nombre}`}
+            {isBloodBank ? `Mi Banco de Sangre ${bank?.nombre}` : `Mi Banco de Leche ${bank?.nombre}`}
           </h1>
           <p className="mt-2 text-muted-foreground">
             Bienvenido a {bank?.nombre}
@@ -266,13 +262,10 @@ export default function BankAdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button className="w-full" onClick={() => router.push('/bank/update-profile')}>
-                  ⚙ Configuración
+                  Configuración
                 </Button>
                 <Button variant="secondary" className="w-full" onClick={() => router.push('/bank/campaigns')}>
-                  📢 Gestionar Campañas
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => router.push('/bank/profile')}>
-                  👥 Perfil del Banco
+                  Gestionar Campañas
                 </Button>
               </CardContent>
             </Card>
@@ -283,29 +276,6 @@ export default function BankAdminDashboard() {
         {/* Timeline de Actividades */}
         <div className="mb-8">
           <ActivityTimeline activities={activities} />
-        </div>
-
-        {/* Sección adicional: Próximas funcionalidades */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reportes</CardTitle>
-              <CardDescription>Próximamente</CardDescription>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Estadísticas y análisis de donaciones
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Integraciones</CardTitle>
-              <CardDescription>Próximamente</CardDescription>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Conecta con otros sistemas de salud
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

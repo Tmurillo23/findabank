@@ -1,9 +1,6 @@
 import { createClient } from "@/shared/services/supabase/client";
 
-/**
- * Autenticar usuario con email y password
- * Solo lógica de cliente, sin redirecciones
- */
+
 export async function signInWithPassword(email: string, password: string) {
   const supabase = createClient();
 
@@ -19,9 +16,7 @@ export async function signInWithPassword(email: string, password: string) {
   return data;
 }
 
-/**
- * Obtener el rol del usuario autenticado
- */
+
 export async function getUserRole(): Promise<string | undefined> {
   const supabase = createClient();
 

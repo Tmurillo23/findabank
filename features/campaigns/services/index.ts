@@ -1,2 +1,2 @@
 // Campaign services
-export { createCampaign, getBankCampaigns, getCampaign, sendCampaign } from './campaign-creation';
+export { createCampaign, getBankCampaigns} from './campaign-creation';

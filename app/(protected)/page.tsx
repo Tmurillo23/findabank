@@ -42,7 +42,7 @@ export default async function ProtectedPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           <Card className="cursor-pointer hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle>🩸 Banco de Sangre/Leche</CardTitle>
+              <CardTitle>Banco de Sangre/Leche</CardTitle>
               <CardDescription>
                 Gestiona donaciones y campañas
               </CardDescription>
@@ -62,7 +62,7 @@ export default async function ProtectedPage() {
 
           <Card className="cursor-pointer hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle>👤 Donante</CardTitle>
+              <CardTitle>Donante</CardTitle>
               <CardDescription>
                 Gestiona tu perfil de donación
               </CardDescription>

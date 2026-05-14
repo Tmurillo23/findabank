@@ -1,4 +1,5 @@
 "use client";
+// LO MISMO ACÁ, EL FRONT Y EL BACK TENÍAN QUE ESTAR SEPARADOS
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -31,7 +32,6 @@ export default function BankSetupPage() {
   });
 
   useEffect(() => {
-    // Verificar si el usuario ya tiene un banco configurado
     const checkExistingBank = async () => {
       try {
         const supabase = createClient();

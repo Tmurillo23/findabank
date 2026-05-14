@@ -10,7 +10,6 @@ import {getCurrentLocation} from "@/shared/services/geolocalization";
 
 
 
-// TODO:importar blood_types desde tipos y meter esta lógica en services y poner también la función para encontrar bancos cercanos
 
 const BLOOD_TYPES: BloodType[] = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 

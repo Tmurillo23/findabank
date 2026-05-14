@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/shared/services/supabase/client";
 import { getCurrentLocation, calculateDistance, Coordinates } from "@/shared/services/geolocalization/geolocalization";
-import { BankProfile } from "@/features/banks/types/bank-types"; // Importamos el tipo real
+import { BankProfile } from "@/features/banks/types/bank-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { MapPin, ArrowLeft, Loader2, Droplets, Baby, Info } from "lucide-react";
@@ -12,7 +12,6 @@ import { MapPin, ArrowLeft, Loader2, Droplets, Baby, Info } from "lucide-react";
 function BankProfileClient({ bankId }: { bankId: string }) {
   const router = useRouter();
   
-  // Cambiamos 'any' por el tipo BankProfile para quitar el error de ESLint
   const [bank, setBank] = useState<BankProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [distance, setDistance] = useState<number | null>(null);

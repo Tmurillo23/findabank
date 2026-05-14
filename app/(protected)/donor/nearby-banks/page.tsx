@@ -104,7 +104,7 @@ export default function NearbyBanksPage() {
 
       {error && (
         <div className="bg-destructive/10 border-l-4 border-destructive p-4 rounded-r-lg text-destructive text-sm font-medium">
-          ⚠️ {error}
+           {error}
         </div>
       )}
 

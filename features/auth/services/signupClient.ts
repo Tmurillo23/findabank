@@ -20,7 +20,7 @@ export async function signUpWithEmail(
     password,
     options: {
       data: {
-        role, // Guardar rol en metadata del usuario
+        role,
       },
       emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/confirm?next=${encodeURIComponent(redirectPath)}`,
     },

@@ -62,7 +62,6 @@ export function BankProfileForm({
         longitude: longitude,
       });
 
-      // Redirigir al dashboard del banco
       router.push("/bank");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error al crear el perfil");
@@ -153,7 +152,7 @@ export function BankProfileForm({
                 </div>
               </div>
 
-              {/* Descripción (opcional) */}
+              {/* Descripción  */}
               <div className="grid gap-2">
                 <Label htmlFor="descripcion">Descripción (Opcional)</Label>
                 <textarea
