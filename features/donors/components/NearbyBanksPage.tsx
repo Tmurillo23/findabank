@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentLocation, Coordinates } from "@/shared/services/geolocalization/geolocalization";
 import { createClient } from "@/shared/services/supabase/client";
-import { findNearbyBanks, updateDonorProfileInfo } from "@/features/donors/services/donors";
+import { findNearbyBanks } from "@/features/donors/services/donors";
 import { BankProfile } from "@/features/banks/types/bank-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
@@ -31,11 +31,22 @@ export function NearbyBanksPage() {
                 const user = userData?.user;
 
                 if (user) {
-                    await updateDonorProfileInfo({
-                        id: user.id,
-                        latitude: currentPos.lat,
-                        longitude: currentPos.lng
-                    });
+                    // Solo actualizar ubicación si el donante ya existe
+                    const donorExists = await supabase
+                        .from("donors")
+                        .select("id")
+                        .eq("id", user.id)
+                        .single();
+
+                    if (!donorExists.error) {
+                        await supabase
+                            .from("donors")
+                            .update({
+                                latitude: currentPos.lat,
+                                longitude: currentPos.lng
+                            })
+                            .eq("id", user.id);
+                    }
                 }
 
                 const nearbyBanks = await findNearbyBanks(currentPos, 20);
