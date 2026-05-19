@@ -78,7 +78,7 @@ export function DonorProfileForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">👤 Completa tu Perfil de Donante</CardTitle>
+          <CardTitle className="text-2xl">Completa tu Perfil de Donante</CardTitle>
           <CardDescription>
             Ayúdanos a conocerte mejor para conectarte con los bancos adecuados
           </CardDescription>
@@ -128,7 +128,7 @@ export function DonorProfileForm({
                     onClick={handleGetLocation}
                     disabled={geoLoading}
                 >
-                  {geoLoading ? "Obteniendo ubicación..." : "📍 Usar Mi Ubicación Actual"}
+                  {geoLoading ? "Obteniendo ubicación..." : "Usar Mi Ubicación Actual"}
                 </Button>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -171,7 +171,7 @@ export function DonorProfileForm({
                   className="w-5 h-5 rounded cursor-pointer"
                 />
                 <Label htmlFor="canDonateMilk" className="cursor-pointer">
-                  🥛 Puedo donar leche materna
+                  Puedo donar leche materna
                 </Label>
               </div>
 

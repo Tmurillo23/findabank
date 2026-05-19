@@ -57,9 +57,7 @@ export default function NearbyBanksPage() {
             
             return { ...bank, distance };
           })
-          // --- CAMBIO SOLICITADO: FILTRO DE 20KM ---
           .filter(bank => bank.distance <= 20) 
-          // ----------------------------------------
           .sort((a, b) => a.distance - b.distance);
 
         setBanks(processedBanks);
