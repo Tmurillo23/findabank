@@ -1,7 +1,8 @@
 import { createClient } from "@/shared/services/supabase/client";
+import { calculateDistance, Coordinates } from "@/shared/services/geolocalization/geolocalization";
 import type { DonorProfile } from "@/features/donors/types";
+import type { BankProfile } from "@/features/banks/types/bank-types";
 
-// TODO: hacer las funciones: findNearbyBanks, getDonorStats. Esto es para después
 
 export async function fetchDonorData(donorId: string): Promise<DonorProfile | null> {
   const supabase = createClient();
@@ -25,6 +26,37 @@ export async function updateDonorProfileInfo(upsertData: Partial<DonorProfile>) 
   if (error) {
     throw error;
   }
+}
+
+export async function findNearbyBanks(
+  userLocation: Coordinates,
+  radiusKm: number = 20
+): Promise<(BankProfile & { distance: number })[]> {
+  const supabase = createClient();
+
+  const { data: banksData, error: banksError } = await supabase
+    .from("banco")
+    .select("*");
+
+  if (banksError) {
+    throw banksError;
+  }
+
+  const processedBanks = (banksData as BankProfile[])
+    .map(bank => {
+      const lat = parseFloat(bank.latitude);
+      const lng = parseFloat(bank.longitude);
+      const isValidCoord = !isNaN(lat) && !isNaN(lng);
+      const distance = isValidCoord
+        ? calculateDistance(userLocation, { lat, lng })
+        : Infinity;
+
+      return { ...bank, distance };
+    })
+    .filter(bank => bank.distance <= radiusKm)
+    .sort((a, b) => a.distance - b.distance);
+
+  return processedBanks;
 }
 
 
