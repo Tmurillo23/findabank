@@ -20,6 +20,7 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
   const [situation, setSituation] = useState<"suficiente" | "critico" | "no_hay">("suficiente");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [currentBankId, setCurrentBankId] = useState<string>("");
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
     return (
       <Card>
         <CardHeader>
-          <CardTitle>🩸 Inventario de Sangre</CardTitle>
+          <CardTitle>Inventario de Sangre</CardTitle>
           <CardDescription>Estado actual del stock de sangre</CardDescription>
         </CardHeader>
         <CardContent>
@@ -89,9 +90,15 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
 
   // Vista de edición para configuración
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>🩸 Inventario de Sangre</CardTitle>
+    <>
+      {successMessage && (
+        <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2 rounded-3xl border border-green-200 bg-white px-5 py-3 shadow-2xl shadow-slate-950/10">
+          <p className="text-sm font-semibold text-green-700">{successMessage}</p>
+        </div>
+      )}
+      <Card>
+        <CardHeader>
+        <CardTitle>Inventario de Sangre</CardTitle>
         <CardDescription>Selecciona tipo de sangre y situacion para actualizar stock</CardDescription>
       </CardHeader>
       <CardContent>
@@ -159,7 +166,8 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
                 else next.push(updated);
                 return next;
               });
-              alert("Stock de sangre actualizado correctamente");
+              setSuccessMessage("Stock de sangre actualizado correctamente");
+              setTimeout(() => setSuccessMessage(null), 1500);
             } catch (err) {
               const message = err instanceof Error ? err.message : "Error desconocido";
               setError(message);
@@ -175,5 +183,6 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
         </Button>
       </CardContent>
     </Card>
+    </>
   );
 }

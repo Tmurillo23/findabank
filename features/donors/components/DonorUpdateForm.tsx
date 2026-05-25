@@ -18,6 +18,7 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
   const [donor, setDonor] = useState<DonorProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [fullName, setFullName] = useState("");
   const [bloodType, setBloodType] = useState<BloodType>(BLOOD_TYPES[0]);
@@ -89,10 +90,10 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveProfile = async () => {
     setIsLoading(true);
     setFormError(null);
+    setSuccessMessage(null);
 
     if (!latitude || !longitude) {
       setFormError("Por favor, proporciona tu ubicación");
@@ -120,13 +121,20 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
 
       await updateDonorProfileInfo(upsertData);
 
-      alert("Perfil guardado correctamente.");
-      router.push("/donor");
+      setSuccessMessage("Perfil guardado correctamente.");
+      setTimeout(() => {
+        router.push("/donor");
+      }, 1500);
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : "Error al actualizar perfil");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await saveProfile();
   };
 
   if (loading) {
@@ -149,6 +157,11 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      {successMessage && (
+        <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2 rounded-3xl border border-green-200 bg-white px-5 py-3 shadow-2xl shadow-slate-950/10">
+          <p className="text-sm font-semibold text-green-700">{successMessage}</p>
+        </div>
+      )}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -250,6 +263,17 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
             </div>
           </form>
         </CardContent>
+        <div className="border-t p-4">
+          <div className="max-w-md mx-auto">
+            <Button
+              onClick={saveProfile}
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Guardando..." : "Confirmar cambios"}
+            </Button>
+          </div>
+        </div>
       </Card>
     </div>
   );

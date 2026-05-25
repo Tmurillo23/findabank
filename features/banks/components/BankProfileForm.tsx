@@ -71,13 +71,12 @@ export function BankProfileForm({
   };
 
   const bankTypeLabel = role === "blood_bank" ? "Banco de Sangre" : "Banco de Leche";
-  const bankEmoji = role === "blood_bank" ? "🩸" : "🥛";
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">{bankEmoji} Completa tu Perfil de {bankTypeLabel}</CardTitle>
+          <CardTitle className="text-2xl">Completa tu Perfil de {bankTypeLabel}</CardTitle>
           <CardDescription>
             Proporciona información sobre tu banco para que los donantes puedan encontrarte
           </CardDescription>

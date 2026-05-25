@@ -31,13 +31,10 @@ export function LoginForm({
     setError(null);
 
     try {
-      // 1. Autenticar usuario (lógica cliente)
       await signInWithPassword(email, password);
-
-      // 2. Redirigir por rol (lógica servidor)
       await redirectByRole();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "An error occurred";
+      const message = err instanceof Error ? err.message : "Ocurrió un error";
       setError(message);
     } finally {
       setIsLoading(false);
@@ -46,11 +43,11 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Login</CardTitle>
+      <Card className="max-w-xl mx-auto">
+        <CardHeader className="space-y-3 text-center">
+          <CardTitle>Iniciar sesión</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Ingresa tu correo para acceder a tu cuenta.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -67,13 +64,13 @@ export function LoginForm({
               />
             </div>
             <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="password">Contraseña</Label>
                 <Link
                   href="/forgot-password"
-                  className="ml-auto text-sm underline-offset-4 hover:underline"
+                  className="text-sm text-slate-600 underline-offset-4 transition hover:text-slate-900 hover:underline"
                 >
-                  Forgot your password?
+                  ¿Olvidaste tu contraseña?
                 </Link>
               </div>
               <Input
@@ -84,15 +81,15 @@ export function LoginForm({
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-sm text-rose-600">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="underline underline-offset-4">
-              Sign up
+          <div className="mt-4 text-center text-sm text-slate-600">
+            ¿No tienes cuenta? {" "}
+            <Link href="/sign-up" className="font-semibold text-slate-950 underline-offset-4 hover:text-slate-700 hover:underline">
+              Regístrate
             </Link>
           </div>
         </CardContent>

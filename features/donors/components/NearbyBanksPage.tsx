@@ -96,12 +96,7 @@ export function NearbyBanksPage() {
                 </div>
             )}
 
-            {coords && !error && (
-                <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/20 px-4 py-2 rounded-full text-primary text-sm w-fit">
-                    <MapPin size={14} />
-                    Ubicación detectada: {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
-                </div>
-            )}
+            {/* Ubicación detectada removida por solicitud del usuario */}
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {banks.map((bank) => (

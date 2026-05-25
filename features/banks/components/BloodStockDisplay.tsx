@@ -59,7 +59,7 @@ export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>🩸 Stock de Sangre</CardTitle>
+          <CardTitle>Stock de Sangre</CardTitle>
           <CardDescription>Estado actual del inventario</CardDescription>
         </CardHeader>
         <CardContent>
@@ -73,7 +73,7 @@ export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>🩸 Stock de Sangre</CardTitle>
+          <CardTitle>Stock de Sangre</CardTitle>
           <CardDescription>Estado actual del inventario</CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +92,7 @@ export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>🩸 Stock de Sangre</CardTitle>
+        <CardTitle>Stock de Sangre</CardTitle>
         <CardDescription>Estado actual del inventario</CardDescription>
       </CardHeader>
       <CardContent>

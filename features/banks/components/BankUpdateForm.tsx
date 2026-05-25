@@ -33,7 +33,20 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
   const [editLongitude, setEditLongitude] = useState("");
   const [geoLoading, setGeoLoading] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  useEffect(() => {
+    if (!successMessage) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setSuccessMessage(null);
+    }, 1500);
+
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
 
   useEffect(() => {
     const initializeBankForm = async () => {
@@ -95,6 +108,11 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
       <div className="flex items-center justify-between border-b p-6">
         <h2 className="text-2xl font-bold">Configuración de {bankName || "Banco"}</h2>
       </div>
+      {successMessage && (
+        <div className="mx-6 mb-4 rounded-3xl border border-green-200 bg-green-50 px-5 py-4 shadow-sm">
+          <p className="text-sm font-semibold text-green-900">{successMessage}</p>
+        </div>
+      )}
 
         <div className="flex border-b px-6">
           <button
@@ -166,8 +184,8 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
 
                       await updateBankProfileInfo(bankId, updates);
 
-                      alert("Perfil actualizado correctamente.");
-                      router.push("/bank");
+                      setSuccessMessage("Perfil actualizado correctamente.");
+                      setTimeout(() => router.push("/bank"), 1500);
                     } catch (err: unknown) {
                       setProfileError(err instanceof Error ? err.message : "Error al actualizar perfil");
                     } finally {

@@ -20,6 +20,7 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
   const [situation, setSituation] = useState<"suficiente" | "critico" | "no_hay">("suficiente");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [currentBankId, setCurrentBankId] = useState<string>("");
 
   useEffect(() => {
@@ -55,9 +56,15 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
   }, [bancoId]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>🥛 Inventario de Leche Materna</CardTitle>
+    <>
+      {successMessage && (
+        <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2 rounded-3xl border border-green-200 bg-white px-5 py-3 shadow-2xl shadow-slate-950/10">
+          <p className="text-sm font-semibold text-green-700">{successMessage}</p>
+        </div>
+      )}
+      <Card>
+        <CardHeader>
+        <CardTitle>Inventario de Leche Materna</CardTitle>
         <CardDescription>
           {readOnly
             ? "Estado actual del stock de leche materna"
@@ -171,7 +178,8 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
                   else next.push(updated);
                   return next;
                 });
-                alert("Stock de leche actualizado correctamente");
+                setSuccessMessage("Stock de leche actualizado correctamente");
+                setTimeout(() => setSuccessMessage(null), 1500);
               } catch (err) {
                 const message = err instanceof Error ? err.message : "Error desconocido";
                 setError(message);
@@ -188,5 +196,6 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
         )}
       </CardContent>
     </Card>
+    </>
   );
 }

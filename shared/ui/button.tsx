@@ -5,31 +5,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/shared/services/utils";
 
 const buttonVariants = cva(
-  `inline-flex items-center justify-center gap-2 whitespace-nowrap 
-  rounded-md text-sm font-medium transition-colors 
-  focus-visible:outline-none focus-visible:ring-1 
-  focus-visible:ring-ring disabled:pointer-events-none
-  text-sm font-medium disabled:opacity-50 [&_svg]:pointer-events-none 
-  [&_svg]:size-4 [&_svg]:shrink-0`,
+  `inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/40 disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0`,
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        default: "bg-slate-950 text-white shadow-[0_18px_50px_rgba(15,23,42,0.18)] hover:bg-slate-800",
+        destructive: "bg-rose-500 text-white shadow-sm hover:bg-rose-600",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-slate-200 bg-white text-slate-950 shadow-sm hover:border-slate-300 hover:bg-slate-50",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-slate-100 text-slate-950 shadow-sm hover:bg-slate-200",
+        ghost: "bg-transparent text-slate-950 hover:bg-slate-100",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "h-12 px-6",
+        sm: "h-10 rounded-full px-4 text-xs",
+        lg: "h-14 rounded-full px-8",
+        icon: "h-11 w-11",
       },
     },
     defaultVariants: {

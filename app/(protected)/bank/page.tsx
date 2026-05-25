@@ -141,16 +141,20 @@ export default function BankAdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-muted-foreground">Cargando tu banco...</p>
+      <div className="min-h-screen bg-slate-100 py-16 px-4 sm:px-6">
+        <div className="mx-auto flex max-w-3xl items-center justify-center rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+          <p className="text-lg text-slate-600">Cargando tu banco...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-red-500">{error}</p>
+      <div className="min-h-screen bg-slate-100 py-16 px-4 sm:px-6">
+        <div className="mx-auto flex max-w-3xl items-center justify-center rounded-[2rem] border border-rose-100 bg-rose-50 p-8 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+          <p className="text-lg text-rose-600">{error}</p>
+        </div>
       </div>
     );
   }
@@ -159,8 +163,8 @@ export default function BankAdminDashboard() {
   const isBloodBank = bank?.tipo === "sangre";
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-4xl font-bold">
@@ -171,7 +175,7 @@ export default function BankAdminDashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
           <Card className="border-blue-100 bg-blue-50">
             <CardHeader>
               <CardTitle className="text-base">Total Stock</CardTitle>
@@ -187,7 +191,7 @@ export default function BankAdminDashboard() {
               <CardTitle className="text-base">Suficiente</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-green-700">{metrics?.items_suficiente ?? 0}</p>
+                <p className="text-3xl font-bold text-green-700">{metrics?.items_suficiente ?? 0}</p>
               <p className="text-sm text-muted-foreground mt-2">Items con stock adecuado</p>
             </CardContent>
           </Card>
@@ -201,6 +205,18 @@ export default function BankAdminDashboard() {
               <p className="text-sm text-muted-foreground mt-2">Items que requieren atención</p>
             </CardContent>
           </Card>
+
+          {isMilkBank && (
+            <Card className="border-gray-100 bg-white">
+              <CardHeader>
+                <CardTitle className="text-base">No hay</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-gray-700">{metrics?.items_agotado ?? 0}</p>
+                <p className="text-sm text-muted-foreground mt-2">Items sin stock</p>
+              </CardContent>
+            </Card>
+          )}
 
           <Card className="border-gray-100 bg-white">
             <CardHeader>

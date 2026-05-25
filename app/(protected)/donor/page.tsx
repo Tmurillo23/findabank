@@ -59,23 +59,27 @@ export default function DonorDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-muted-foreground">Cargando tu perfil...</p>
+      <div className="min-h-screen bg-slate-100 py-16 px-4 sm:px-6">
+        <div className="mx-auto flex max-w-3xl items-center justify-center rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+          <p className="text-lg text-slate-600">Cargando tu perfil...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-red-500">{error}</p>
+      <div className="min-h-screen bg-slate-100 py-16 px-4 sm:px-6">
+        <div className="mx-auto flex max-w-3xl items-center justify-center rounded-[2rem] border border-rose-100 bg-rose-50 p-8 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+          <p className="text-lg text-rose-600">{error}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-4xl font-bold">Mi Perfil de Donante</h1>
@@ -147,10 +151,10 @@ export default function DonorDashboard() {
                   {donor?.puede_donar_leche ? "Sí" : "No"}
                 </p>
               </div>
-              {donor?.description && (
+              {donor?.descripcion && (
                 <div>
                   <p className="text-sm text-muted-foreground">Descripción</p>
-                  <p className="text-base">{donor.description}</p>
+                  <p className="text-base">{donor.descripcion}</p>
                 </div>
               )}
               {donor?.location && (
@@ -200,22 +204,6 @@ export default function DonorDashboard() {
           </Card>
 
           {/* Estadísticas */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Estadísticas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center">
-                <p className="text-3xl font-bold">0</p>
-                <p className="text-sm text-muted-foreground">Donaciones</p>
-              </div>
-              <div className="text-center border-t pt-4">
-                <p className="text-3xl font-bold">0</p>
-                <p className="text-sm text-muted-foreground">Bancos Visitados</p>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Donabilidad */}
           <Card className="lg:col-span-3">
             <CardHeader>

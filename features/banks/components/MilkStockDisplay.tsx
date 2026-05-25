@@ -54,7 +54,7 @@ export function MilkStockDisplay({ bancoId }: MilkStockDisplayProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>🥛 Stock de Leche Materna</CardTitle>
+          <CardTitle>Stock de Leche Materna</CardTitle>
           <CardDescription>Estado actual del inventario</CardDescription>
         </CardHeader>
         <CardContent>
@@ -68,7 +68,7 @@ export function MilkStockDisplay({ bancoId }: MilkStockDisplayProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>🥛 Stock de Leche Materna</CardTitle>
+          <CardTitle>Stock de Leche Materna</CardTitle>
           <CardDescription>Estado actual del inventario</CardDescription>
         </CardHeader>
         <CardContent>
@@ -81,7 +81,7 @@ export function MilkStockDisplay({ bancoId }: MilkStockDisplayProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>🥛 Stock de Leche Materna</CardTitle>
+        <CardTitle>Stock de Leche Materna</CardTitle>
         <CardDescription>Estado actual del inventario</CardDescription>
       </CardHeader>
       <CardContent>

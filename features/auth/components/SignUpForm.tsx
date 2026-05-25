@@ -36,7 +36,6 @@ export function SignUpForm({
       } else if (role === "blood_bank" || role === "milk_bank") {
         window.location.href = `/bank/update-profile?role=${role}`;
       }
-
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Ocurrió un error");
     } finally {
@@ -46,77 +45,71 @@ export function SignUpForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Crear Cuenta</CardTitle>
-          <CardDescription>Regístrate para comenzar a donar o recibir</CardDescription>
+      <Card className="max-w-xl mx-auto">
+        <CardHeader className="space-y-3">
+          <CardTitle>Crear cuenta</CardTitle>
+          <CardDescription>Regístrate para comenzar a donar o recibir.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignUp}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="role">¿Qué tipo de cuenta deseas?</Label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as UserRole)}
-                  className="flex h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  required
-                >
-                  <option value="donor">👤 Donante</option>
-                  <option value="blood_bank">🩸 Banco de Sangre</option>
-                  <option value="milk_bank">🥛 Banco de Leche</option>
-                </select>
-              </div>
-
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Contraseña</Label>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repetir Contraseña</Label>
-                </div>
-                <Input
-                  id="repeat-password"
-                  type="password"
-                  required
-                  value={repeatPassword}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
-                />
-              </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creando cuenta..." : "Registrarse"}
-              </Button>
+          <form onSubmit={handleSignUp} className="grid gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
-            <div className="mt-4 text-center text-sm">
-              ¿Ya tienes cuenta?{" "}
-              <Link href="/login" className="underline underline-offset-4">
-                Inicia sesión
-              </Link>
+
+            <div className="grid gap-2">
+              <Label htmlFor="role">¿Qué tipo de cuenta deseas?</Label>
+              <select
+                id="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="flex h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-900 outline-none transition focus-visible:border-slate-400 focus-visible:ring-2 focus-visible:ring-primary/30"
+                required
+              >
+                <option value="donor">Donante</option>
+                <option value="blood_bank">Banco de Sangre</option>
+                <option value="milk_bank">Banco de Leche</option>
+              </select>
             </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="repeat-password">Repetir contraseña</Label>
+              <Input
+                id="repeat-password"
+                type="password"
+                required
+                value={repeatPassword}
+                onChange={(e) => setRepeatPassword(e.target.value)}
+              />
+            </div>
+            {error && <p className="text-sm text-rose-600">{error}</p>}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creando cuenta..." : "Registrarse"}
+            </Button>
           </form>
+          <div className="mt-4 text-center text-sm text-slate-600">
+            ¿Ya tienes cuenta? {" "}
+            <Link href="/login" className="font-semibold text-slate-950 underline-offset-4 hover:text-slate-700 hover:underline">
+              Inicia sesión
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

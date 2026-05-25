@@ -30,11 +30,11 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                 <div className="flex-shrink-0">
                   {activity.categoria === "ALERT" ? (
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                      ⚠️
+                      !
                     </div>
                   ) : (
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      ℹ️
+                      i
                     </div>
                   )}
                 </div>

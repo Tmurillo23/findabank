@@ -25,57 +25,59 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12 p-8">
-      <div className="w-full">
-        <div className="bg-blue-50 border border-blue-200 text-blue-900 text-sm p-3 px-5 rounded-md flex gap-3 items-center">
-          <span className="text-lg">ℹ️</span>
-          <div>
-            <p className="font-semibold">Bienvenido a FindABank</p>
-            <p>Selecciona tu rol para acceder al dashboard</p>
+    <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-r from-white via-slate-100 to-white p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+          <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr] lg:items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Selecciona tu rol</p>
+              <h1 className="mt-4 text-4xl font-semibold text-slate-950">¿Cómo quieres trabajar hoy?</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+                Elige tu perfil y entra a un dashboard adaptado a tus necesidades como banco o donante.
+              </p>
+            </div>
+            <div className="rounded-[1.75rem] bg-slate-950 p-5 text-white shadow-lg shadow-slate-950/10">
+              <p className="font-semibold">Consejo rápido</p>
+              <p className="mt-3 text-sm leading-6 text-slate-300">
+                Si ya tienes un rol asignado, selecciona la opción correspondiente para continuar.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Elige tu rol</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="border-slate-200 transition hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(15,23,42,0.12)]">
             <CardHeader>
-              <CardTitle>Banco de Sangre/Leche</CardTitle>
-              <CardDescription>
-                Gestiona donaciones y campañas
-              </CardDescription>
+              <CardTitle>Banco de Sangre / Leche</CardTitle>
+              <CardDescription>Gestiona donaciones y campañas</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-slate-600 mb-6">
                 Acceso para administradores de bancos. Crea campañas, maneja stocks y contacta donantes.
               </p>
               <Link
                 href="/bank"
-                className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                className="inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                Ir al Dashboard de Banco
+                Ir al dashboard de banco
               </Link>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+          <Card className="border-slate-200 transition hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(15,23,42,0.12)]">
             <CardHeader>
               <CardTitle>Donante</CardTitle>
-              <CardDescription>
-                Gestiona tu perfil de donación
-              </CardDescription>
+              <CardDescription>Gestiona tu perfil de donación</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-slate-600 mb-6">
                 Acceso para donantes. Actualiza tu perfil, busca bancos cercanos y recibe campañas.
               </p>
               <Link
                 href="/donor"
-                className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                className="inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                Ir al Dashboard de Donante
+                Ir al dashboard de donante
               </Link>
             </CardContent>
           </Card>

@@ -173,7 +173,7 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
                   className="flex-1 bg-green-600 hover:bg-green-700"
                   disabled={isLoading}
               >
-                {isLoading ? "Creando..." : "✅ Crear Campaña"}
+                {isLoading ? "Creando..." : "Crear Campaña"}
               </Button>
             </div>
           </form>
