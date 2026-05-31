@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentLocation, Coordinates } from "@/shared/services/geolocalization/geolocalization";
+import { getCurrentLocation } from "@/shared/services/geolocalization/geolocalization";
 import { createClient } from "@/shared/services/supabase/client";
 import { findNearbyBanks } from "@/features/donors/services/donors";
 import { BankProfile } from "@/features/banks/types/bank-types";
@@ -15,49 +15,38 @@ export function NearbyBanksPage() {
     const router = useRouter();
     const [banks, setBanks] = useState<(BankProfile & { distance: number })[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [coords, setCoords] = useState<Coordinates | null>(null);
 
     useEffect(() => {
         async function getData() {
-            try {
-                setLoading(true);
+            setLoading(true);
 
-                const currentPos = await getCurrentLocation();
-                setCoords(currentPos);
+            const currentPos = await getCurrentLocation();
 
-                const supabase = createClient();
-                const { data: userData } = await supabase.auth.getUser();
-                const user = userData?.user;
+            const supabase = createClient();
+            const { data: userData } = await supabase.auth.getUser();
+            const user = userData?.user;
 
-                if (user) {
-                    // Solo actualizar ubicación si el donante ya existe
-                    const donorExists = await supabase
+            if (user) {
+                const { error: donorError } = await supabase
+                    .from("donors")
+                    .select("id")
+                    .eq("id", user.id)
+                    .single();
+
+                if (!donorError) {
+                    await supabase
                         .from("donors")
-                        .select("id")
-                        .eq("id", user.id)
-                        .single();
-
-                    if (!donorExists.error) {
-                        await supabase
-                            .from("donors")
-                            .update({
-                                latitude: currentPos.lat,
-                                longitude: currentPos.lng
-                            })
-                            .eq("id", user.id);
-                    }
+                        .update({
+                            latitude: currentPos.lat,
+                            longitude: currentPos.lng
+                        })
+                        .eq("id", user.id);
                 }
-
-                const nearbyBanks = await findNearbyBanks(currentPos, 20);
-                setBanks(nearbyBanks);
-            } catch (err) {
-                console.error("Error capturado:", err);
-                const errorMessage = err instanceof Error ? err.message : "Error desconocido";
-                setError(`No pudimos cargar la información: ${errorMessage}`);
-            } finally {
-                setLoading(false);
             }
+
+            const nearbyBanks = await findNearbyBanks(currentPos, 20);
+            setBanks(nearbyBanks);
+            setLoading(false);
         }
 
         getData();
@@ -90,13 +79,6 @@ export function NearbyBanksPage() {
                 <p className="text-slate-500 text-lg">Mostrando puntos de atención en un radio de 20 km.</p>
             </header>
 
-            {error && (
-                <div className="bg-destructive/10 border-l-4 border-destructive p-4 rounded-r-lg text-destructive text-sm font-medium">
-                    {error}
-                </div>
-            )}
-
-            {/* Ubicación detectada removida por solicitud del usuario */}
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {banks.map((bank) => (
@@ -136,7 +118,7 @@ export function NearbyBanksPage() {
                 ))}
             </div>
 
-            {banks.length === 0 && !error && (
+            {banks.length === 0 && (
                 <div className="text-center py-20 border-2 border-dashed rounded-2xl border-slate-200 flex flex-col items-center gap-4">
                     <SearchX className="text-slate-300" size={48} />
                     <div>

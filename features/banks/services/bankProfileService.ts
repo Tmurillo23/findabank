@@ -1,6 +1,13 @@
 import { createClient } from "@/shared/services/supabase/client";
+import { mapSupabaseError } from "@/shared/services/errors";
+import { ValidationError } from "@/features/AppErrors";
 import {BankProfile, UpdateBankProfileInput} from "@/features/banks/types";
 
+/**
+ * Fetches bank profile data by ID
+ * @throws NotFoundError if bank not found
+ * @throws SupabaseError for database errors
+ */
 export async function fetchBankData(bankId: string): Promise<BankProfile | null> {
   const supabase = createClient();
 
@@ -10,49 +17,45 @@ export async function fetchBankData(bankId: string): Promise<BankProfile | null>
     .eq("id", bankId)
     .single();
 
-  if (error && error.code !== "PGRST116") {
-    throw new Error("No se encontraron datos del banco");
+  if (error) {
+    throw mapSupabaseError(error);
   }
 
   return data as BankProfile | null;
 }
 
+/**
+ * Updates bank profile information
+ * Performs either update or insert based on existence
+ * @throws ValidationError if bankId is invalid
+ * @throws SupabaseError for database errors
+ */
 export async function updateBankProfileInfo(bankId: string, updates: UpdateBankProfileInput) {
   if (!bankId || bankId.trim() === "") {
-    throw new Error("ID del banco no válido");
+    throw new ValidationError("Bank ID is required", { bankId });
   }
 
   const supabase = createClient();
-  
-  try {
-    // Intentar UPDATE primero
-    const { error: updateError, data: updateData } = await supabase
+
+  // Intentar UPDATE primero
+  const { error: updateError, data: updateData } = await supabase
+    .from("banco")
+    .update(updates)
+    .eq("id", bankId)
+    .select();
+
+  if (updateError) {
+    throw mapSupabaseError(updateError);
+  }
+
+  // Si no se actualizaron registros, intentar INSERT
+  if (!updateData || updateData.length === 0) {
+    const { error: insertError } = await supabase
       .from("banco")
-      .update(updates)
-      .eq("id", bankId)
-      .select();
-    
-    if (updateError) {
-      console.error("Update error:", updateError);
-      throw updateError;
-    }
+      .insert({ id: bankId, ...updates });
 
-    console.log("Update result:", updateData);
-
-    // Si no actualizo nada (registro no existe), intentar INSERT
-    if (!updateData || updateData.length === 0) {
-      console.log("No rows updated, trying INSERT");
-      const { error: insertError } = await supabase
-        .from("banco")
-        .insert({ id: bankId, ...updates });
-      
-      if (insertError) {
-        console.error("Insert error:", insertError);
-        throw insertError;
-      }
+    if (insertError) {
+      throw mapSupabaseError(insertError);
     }
-  } catch (error: any) {
-    console.error("Strategy error:", error);
-    throw new Error(`Error actualizando banco: ${error.message || error}`);
   }
 }

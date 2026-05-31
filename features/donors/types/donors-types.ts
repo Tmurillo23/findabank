@@ -1,6 +1,6 @@
 
 export type BloodType = "O+" | "O-" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-";
-
+export const BLOOD_TYPES: BloodType[] = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 
 export interface DonorProfile {
     id: string;
@@ -34,3 +34,12 @@ export interface UpdateDonorProfileInput {
     longitude?: number;
 }
 
+export  interface  DonorData {
+    id: string;
+    full_name: string;
+    blood_type: string;
+    puede_donar_leche: boolean;
+    description?: string;
+    location?: string;
+    created_at: string;
+}

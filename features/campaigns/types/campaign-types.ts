@@ -23,3 +23,10 @@ export interface CampaignFormProps {
     bankId: string;
     onCampaignCreated: (campaign: Campaign) => void;
 }
+
+export interface CampaignStatisticsProps {
+    metrics: {
+        total_campanas: number;
+        campanas_activas: number;
+    };
+}

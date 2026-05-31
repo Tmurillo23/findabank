@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/shared/services/utils";
 import type { BloodType } from "@/features/donors/types";
 import {getCurrentLocation} from "@/shared/services/geolocalization";
+import {BLOOD_TYPES} from "@/features/donors/types";
 
 
 
 
-const BLOOD_TYPES: BloodType[] = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 
 export function DonorProfileForm({
   className,
@@ -33,15 +33,10 @@ export function DonorProfileForm({
     setGeoLoading(true);
     setError(null);
 
-    try {
-      const coords = await getCurrentLocation();
-      setLatitude(coords.lat.toString());
-      setLongitude(coords.lng.toString());
-    } catch {
-      setError("No se pudo obtener tu ubicación. Ingresa manualmente.");
-    } finally {
-      setGeoLoading(false);
-    }
+    const coords = await getCurrentLocation();
+    setLatitude(coords.lat.toString());
+    setLongitude(coords.lng.toString());
+    setGeoLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,23 +50,16 @@ export function DonorProfileForm({
       return;
     }
 
+    await createDonorProfile({
+      full_name: fullName,
+      blood_type: bloodType,
+      puede_donar_leche: canDonateMilk,
+      descripcion: description,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
 
-    try {
-      await createDonorProfile({
-        full_name: fullName,
-        blood_type: bloodType,
-        puede_donar_leche: canDonateMilk,
-        descripcion: description,
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-      });
-
-      router.push("/donor");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creating profile");
-    } finally {
-      setIsLoading(false);
-    }
+    router.push("/donor");
   };
 
   return (

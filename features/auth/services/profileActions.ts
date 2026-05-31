@@ -1,10 +1,16 @@
 "use server";
 
 import { createClient } from "@/shared/services/supabase/server";
+import { mapSupabaseError } from "@/shared/services/errors";
+import { AuthenticationError } from "@/features/AppErrors";
 import { UpdateDonorProfileInput } from "@/features/donors/types";
 import { UpdateBankProfileInput, BANK_TYPE_MAP } from "@/features/banks/types";
 
-
+/**
+ * Creates a donor profile for the authenticated user
+ * @throws AuthenticationError if no user is authenticated
+ * @throws SupabaseError for database errors
+ */
 export async function createDonorProfile(input: UpdateDonorProfileInput) {
   const supabase = await createClient();
 
@@ -13,7 +19,7 @@ export async function createDonorProfile(input: UpdateDonorProfileInput) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("No authenticated user");
+    throw new AuthenticationError("No user is currently authenticated");
   }
 
   const { data, error } = await supabase
@@ -26,20 +32,22 @@ export async function createDonorProfile(input: UpdateDonorProfileInput) {
       descripcion: input.descripcion,
       created_at: new Date().toISOString(),
       correo: user.email,
-
     })
     .select()
     .single();
 
   if (error) {
-    console.error("Error creating donor profile:", error);
-    throw new Error("Failed to create donor profile");
+    throw mapSupabaseError(error);
   }
 
   return data;
 }
 
-
+/**
+ * Creates a bank profile for the authenticated user
+ * @throws AuthenticationError if no user is authenticated
+ * @throws SupabaseError for database errors
+ */
 export async function createBankProfile(input: UpdateBankProfileInput) {
   const supabase = await createClient();
 
@@ -48,7 +56,7 @@ export async function createBankProfile(input: UpdateBankProfileInput) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("No authenticated user");
+    throw new AuthenticationError("No user is currently authenticated");
   }
 
   const tipoValue = input.tipo && input.tipo in BANK_TYPE_MAP
@@ -71,8 +79,7 @@ export async function createBankProfile(input: UpdateBankProfileInput) {
     .single();
 
   if (error) {
-    console.error("Error creating bank profile:", error);
-    throw new Error(`Failed to create bank profile: ${error.message}`);
+    throw mapSupabaseError(error);
   }
 
   return data;

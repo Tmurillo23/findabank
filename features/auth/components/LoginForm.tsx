@@ -22,23 +22,14 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
-    try {
-      await signInWithPassword(email, password);
-      await redirectByRole();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Ocurrió un error";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
+    await signInWithPassword(email, password);
+    await redirectByRole();
   };
 
   return (
@@ -81,7 +72,6 @@ export function LoginForm({
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && <p className="text-sm text-rose-600">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>

@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared";
 import { getMilkStock } from "@/features/banks/services/bankStockService";
-import type { MilkStock } from "@/features/banks/types/milkStock";
+import type { MilkStock } from "@/features/banks/types";
+import {MilkStockDisplayProps} from "@/features/banks/types";
 import { Badge } from "@/shared/ui/badge";
 
-interface MilkStockDisplayProps {
-  bancoId: string;
-}
 
+/// Arreglar estas constantes
 const MILK_TYPE_LABELS: Record<string, string> = {
   calostro: "Calostro",
   leche_de_transicion: "Leche de Transición",
@@ -31,20 +30,14 @@ const STATUS_LABELS: Record<string, string> = {
 export function MilkStockDisplay({ bancoId }: MilkStockDisplayProps) {
   const [stock, setStock] = useState<MilkStock[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadStock = async () => {
-      try {
+
         setLoading(true);
         const data = await getMilkStock(bancoId);
         setStock(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando stock");
-        console.error("Error loading milk stock:", err);
-      } finally {
-        setLoading(false);
-      }
+        setLoading(false)
     };
 
     loadStock();
@@ -64,19 +57,6 @@ export function MilkStockDisplay({ bancoId }: MilkStockDisplayProps) {
     );
   }
 
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Stock de Leche Materna</CardTitle>
-          <CardDescription>Estado actual del inventario</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-red-500">{error}</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card>

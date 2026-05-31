@@ -15,31 +15,22 @@ export function SignUpForm({
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [role, setRole] = useState<UserRole>("donor");
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
 
     if (password !== repeatPassword) {
-      setError("Las contraseñas no coinciden");
-      setIsLoading(false);
-      return;
+      throw new Error("Las contraseñas no coinciden");
     }
 
-    try {
-      await signUpWithEmail(email, password, role);
+    setIsLoading(true);
 
-      if (role === "donor") {
-        window.location.href = "/donor/update-profile";
-      } else if (role === "blood_bank" || role === "milk_bank") {
-        window.location.href = `/bank/update-profile?role=${role}`;
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ocurrió un error");
-    } finally {
-      setIsLoading(false);
+    await signUpWithEmail(email, password, role);
+
+    if (role === "donor") {
+      window.location.href = "/donor/update-profile";
+    } else if (role === "blood_bank" || role === "milk_bank") {
+      window.location.href = `/bank/update-profile?role=${role}`;
     }
   };
 
@@ -99,7 +90,6 @@ export function SignUpForm({
                 onChange={(e) => setRepeatPassword(e.target.value)}
               />
             </div>
-            {error && <p className="text-sm text-rose-600">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creando cuenta..." : "Registrarse"}
             </Button>

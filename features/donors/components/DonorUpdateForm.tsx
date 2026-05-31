@@ -8,9 +8,9 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Inpu
 import { useRouter } from "next/navigation";
 import { cn } from "@/shared/services/utils";
 import type { BloodType, DonorProfile } from "@/features/donors/types";
+import {BLOOD_TYPES} from "@/features/donors/types";
 import { Loader2 } from "lucide-react";
 
-const BLOOD_TYPES: BloodType[] = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 
 export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
@@ -31,47 +31,43 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
 
   useEffect(() => {
     const fetchDonorDataHandler = async () => {
-      try {
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        if (!user) {
-          setFormError("No estás autenticado");
-          return;
-        }
-
-        const data = await fetchDonorData(user.id);
-
-        if (!data) {
-          setDonor({
-            id: user.id,
-            full_name: "",
-            blood_type: "O+",
-            puede_donar_leche: false,
-            descripcion: "",
-            created_at: new Date().toISOString(),
-            latitude: 0,
-            longitude: 0,
-            correo: user.email || "",
-          });
-        } else {
-          setDonor(data);
-          setFullName(data.full_name || "");
-          setBloodType(data.blood_type || BLOOD_TYPES[0]);
-          setCanDonateMilk(data.puede_donar_leche || false);
-          setDescription(data.descripcion || "");
-          setLatitude(data.latitude?.toString() || "");
-          setLongitude(data.longitude?.toString() || "");
-        }
-      } catch (err) {
-        setFormError(err instanceof Error ? err.message : "Error cargando datos");
-      } finally {
+      if (!user) {
+        setFormError("No estás autenticado");
         setLoading(false);
+        return;
       }
-    };
 
+      const data = await fetchDonorData(user.id);
+
+      if (!data) {
+        setDonor({
+          id: user.id,
+          full_name: "",
+          blood_type: "O+",
+          puede_donar_leche: false,
+          descripcion: "",
+          created_at: new Date().toISOString(),
+          latitude: 0,
+          longitude: 0,
+          correo: user.email || "",
+        });
+      } else {
+        setDonor(data);
+        setFullName(data.full_name || "");
+        setBloodType(data.blood_type || BLOOD_TYPES[0]);
+        setCanDonateMilk(data.puede_donar_leche || false);
+        setDescription(data.descripcion || "");
+        setLatitude(data.latitude?.toString() || "");
+        setLongitude(data.longitude?.toString() || "");
+      }
+
+      setLoading(false);
+    };
     fetchDonorDataHandler();
   }, []);
 
@@ -79,15 +75,10 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
     setGeoLoading(true);
     setFormError(null);
 
-    try {
-      const coords = await getCurrentLocation();
-      setLatitude(coords.lat.toString());
-      setLongitude(coords.lng.toString());
-    } catch {
-      setFormError("No se pudo obtener tu ubicación. Por favor, intenta manualmente.");
-    } finally {
-      setGeoLoading(false);
-    }
+    const coords = await getCurrentLocation();
+    setLatitude(coords.lat.toString());
+    setLongitude(coords.lng.toString());
+    setGeoLoading(false);
   };
 
   const saveProfile = async () => {
@@ -107,29 +98,23 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
       return;
     }
 
-    try {
-      const upsertData: Partial<DonorProfile> = {
-        id: donor.id,
-        full_name: fullName,
-        blood_type: bloodType,
-        puede_donar_leche: canDonateMilk,
-        descripcion: description,
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-        correo: donor.correo
-      };
+    const upsertData: Partial<DonorProfile> = {
+      id: donor.id,
+      full_name: fullName,
+      blood_type: bloodType,
+      puede_donar_leche: canDonateMilk,
+      descripcion: description,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      correo: donor.correo
+    };
 
-      await updateDonorProfileInfo(upsertData);
+    await updateDonorProfileInfo(upsertData);
 
-      setSuccessMessage("Perfil guardado correctamente.");
-      setTimeout(() => {
-        router.push("/donor");
-      }, 1500);
-    } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : "Error al actualizar perfil");
-    } finally {
-      setIsLoading(false);
-    }
+    setSuccessMessage("Perfil guardado correctamente.");
+    setTimeout(() => {
+      router.push("/donor");
+    }, 150);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

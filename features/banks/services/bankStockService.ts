@@ -1,10 +1,8 @@
 import { createClient } from "@/shared/services/supabase/client";
+import { mapSupabaseError } from "@/shared/services/errors";
 import type { BloodStock, CreateBloodStockInput } from "@/features/banks/types/bloodStock";
 import type { MilkStock, CreateMilkStockInput } from "@/features/banks/types/milkStock";
 
-/**
- * Obtener stock de sangre de un banco
- */
 export async function getBloodStock(bancoId: string): Promise<BloodStock[]> {
   const supabase = createClient();
 
@@ -14,13 +12,11 @@ export async function getBloodStock(bancoId: string): Promise<BloodStock[]> {
     .eq("banco_id", bancoId)
     .not("tipo_sangre", "is", null);
 
-  if (error) throw new Error(`Error fetching blood stock: ${error.message}`);
+  if (error) throw mapSupabaseError(error);
   return data || [];
 }
 
-/**
- * Obtener stock de leche de un banco
- */
+
 export async function getMilkStock(bancoId: string): Promise<MilkStock[]> {
   const supabase = createClient();
 
@@ -30,14 +26,11 @@ export async function getMilkStock(bancoId: string): Promise<MilkStock[]> {
     .eq("banco_id", bancoId)
     .not("tipo_leche", "is", null);
 
-  if (error) throw new Error(`Error fetching milk stock: ${error.message}`);
+  if (error) throw mapSupabaseError(error);
   return data || [];
 }
 
-/**
- * Hacer upsert de stock de sangre (crea o actualiza)
- * Seguro contra falta de constraints únicas compuestas en BD
- */
+
 export async function upsertBloodStock(input: CreateBloodStockInput): Promise<BloodStock> {
   const supabase = createClient();
 
@@ -59,7 +52,7 @@ export async function upsertBloodStock(input: CreateBloodStockInput): Promise<Bl
       .select("id, banco_id, tipo_sangre, situacion, updated_at")
       .single();
 
-    if (error) throw new Error(`Error updating blood stock: ${error.message}`);
+    if (error) throw mapSupabaseError(error);
     return data as BloodStock;
   } else {
     const { data, error } = await supabase
@@ -73,15 +66,12 @@ export async function upsertBloodStock(input: CreateBloodStockInput): Promise<Bl
       .select("id, banco_id, tipo_sangre, situacion, updated_at")
       .single();
 
-    if (error) throw new Error(`Error inserting blood stock: ${error.message}`);
+    if (error) throw mapSupabaseError(error);
     return data as BloodStock;
   }
 }
 
-/**
- * Hacer upsert de stock de leche (crea o actualiza)
- * Seguro contra falta de constraints únicas compuestas en BD
- */
+
 export async function upsertMilkStock(input: CreateMilkStockInput): Promise<MilkStock> {
   const supabase = createClient();
 
@@ -103,7 +93,7 @@ export async function upsertMilkStock(input: CreateMilkStockInput): Promise<Milk
       .select("id, banco_id, tipo_leche, situacion, updated_at")
       .single();
 
-    if (error) throw new Error(`Error updating milk stock: ${error.message}`);
+    if (error) throw mapSupabaseError(error);
     return data as MilkStock;
   } else {
     const { data, error } = await supabase
@@ -117,7 +107,7 @@ export async function upsertMilkStock(input: CreateMilkStockInput): Promise<Milk
       .select("id, banco_id, tipo_leche, situacion, updated_at")
       .single();
 
-    if (error) throw new Error(`Error inserting milk stock: ${error.message}`);
+    if (error) throw mapSupabaseError(error);
     return data as MilkStock;
   }
 }

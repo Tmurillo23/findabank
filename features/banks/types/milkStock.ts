@@ -1,6 +1,9 @@
 
 import type { StockStatus } from "@/features/banks/types";
 
+export type milkStock = "calostro" | "leche_de_transicion" | "leche_madura";
+
+export const MILK_TYPES: milkStock[] = ["calostro", "leche_de_transicion", "leche_madura"];
 
 export interface MilkStock {
   id: string;
@@ -17,8 +20,7 @@ export interface CreateMilkStockInput {
   situacion: StockStatus;
 }
 
-
-export interface UpdateMilkStockInput {
-  situacion?: StockStatus;
+export interface MilkStockDisplayProps {
+  bancoId: string;
 }
 

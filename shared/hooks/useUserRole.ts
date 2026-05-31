@@ -12,21 +12,15 @@ export function useUserRole() {
     const supabase = createClient();
 
     const fetchUserRole = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
-        if (user) {
-          const userRole = user.user_metadata?.role as UserRole | undefined;
-          setRole(userRole || null);
-        } else {
-          setRole(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
+      if (user) {
+        const userRole = user.user_metadata?.role as UserRole | undefined;
+        setRole(userRole || null);
+      } else {
         setRole(null);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     fetchUserRole();

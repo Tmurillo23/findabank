@@ -1,15 +1,9 @@
-/**
- * Utilidades para geolocalización
- */
 
 export interface Coordinates {
     lat: number;
     lng: number;
 }
 
-/**
- * Obtener la ubicación actual del usuario
- */
 export function getCurrentLocation(): Promise<Coordinates> {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
@@ -31,9 +25,7 @@ export function getCurrentLocation(): Promise<Coordinates> {
     });
 }
 
-/**
- * Calcular distancia entre dos puntos en km (Haversine formula)
- */
+
 export function calculateDistance(
     coord1: Coordinates,
     coord2: Coordinates
@@ -57,10 +49,4 @@ function toRad(degrees: number): number {
     return degrees * (Math.PI / 180);
 }
 
-/**
- * Convertir coordenadas a formato de dirección aproximada
- */
-export function formatCoordinates(lat: number, lng: number): string {
-    return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-}
 

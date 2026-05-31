@@ -5,10 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { getBloodStock } from "@/features/banks/services/bankStockService";
 import type { BloodStock } from "@/features/banks/types/bloodStock";
 import { Badge } from "@/shared/ui/badge";
+import {BloodStockDisplayProps} from "@/features/banks/types/bloodStock";
 
-interface BloodStockDisplayProps {
-  bancoId: string;
-}
 
 const BLOOD_TYPE_LABELS: Record<string, string> = {
   "O+": "O Positivo",
@@ -36,20 +34,13 @@ const STATUS_LABELS: Record<string, string> = {
 export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
   const [stock, setStock] = useState<BloodStock[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadStock = async () => {
-      try {
-        setLoading(true);
-        const data = await getBloodStock(bancoId);
-        setStock(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando stock");
-        console.error("Error loading blood stock:", err);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const data = await getBloodStock(bancoId);
+      setStock(data);
+      setLoading(false);
     };
 
     loadStock();
@@ -69,19 +60,7 @@ export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
     );
   }
 
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Stock de Sangre</CardTitle>
-          <CardDescription>Estado actual del inventario</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-red-500">{error}</p>
-        </CardContent>
-      </Card>
-    );
-  }
+
 
   // Sort blood types in a logical order
   const sortedStock = stock.sort((a, b) => {

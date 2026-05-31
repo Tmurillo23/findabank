@@ -28,15 +28,10 @@ export function BankProfileForm({
     setGeoLoading(true);
     setError(null);
 
-    try {
-      const coords = await getCurrentLocation();
-      setLatitude(coords.lat.toString());
-      setLongitude(coords.lng.toString());
-    } catch {
-      setError("No se pudo obtener tu ubicación. Ingresa manualmente.");
-    } finally {
-      setGeoLoading(false);
-    }
+    const coords = await getCurrentLocation();
+    setLatitude(coords.lat.toString());
+    setLongitude(coords.lng.toString());
+    setGeoLoading(false);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -50,24 +45,19 @@ export function BankProfileForm({
       return;
     }
 
-    try {
-      const bankType = role === "blood_bank" ? "blood" : "milk";
+    const bankType = role === "blood_bank" ? "blood" : "milk";
 
-      await createBankProfile({
-        nombre,
-        tipo: bankType,
-        descripcion,
-        direccion,
-        latitude: latitude,
-        longitude: longitude,
-      });
+    await createBankProfile({
+      nombre,
+      tipo: bankType,
+      descripcion,
+      direccion,
+      latitude: latitude,
+      longitude: longitude,
+    });
 
-      router.push("/bank");
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al crear el perfil");
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
+    router.push("/bank");
   };
 
   const bankTypeLabel = role === "blood_bank" ? "Banco de Sangre" : "Banco de Leche";

@@ -2,13 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {CampaignStatisticsProps} from "@/features/campaigns/types";
 
-interface CampaignStatisticsProps {
-  metrics: {
-    total_campanas: number;
-    campanas_activas: number;
-  };
-}
 
 export function CampaignStatistics({ metrics }: CampaignStatisticsProps) {
   const total = metrics.total_campanas ?? 0;

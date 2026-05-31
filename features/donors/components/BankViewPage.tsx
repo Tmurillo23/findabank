@@ -15,34 +15,34 @@ export function BankViewPage({ bankId }: { bankId: string }) {
     const [bank, setBank] = useState<BankProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [distance, setDistance] = useState<number | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadBankData() {
-            try {
-                const data = await fetchBankData(bankId);
-                
-                if (!data) {
-                    throw new Error("No se encontraron datos del banco");
-                }
-                
-                setBank(data);
+            const data = await fetchBankData(bankId);
 
-                const userPos: Coordinates = await getCurrentLocation();
-                const bankPos: Coordinates = {
-                    lat: parseFloat(data.latitude),
-                    lng: parseFloat(data.longitude)
-                };
-
-                if (!isNaN(bankPos.lat) && !isNaN(bankPos.lng)) {
-                    const d = calculateDistance(userPos, bankPos);
-                    setDistance(d);
-                }
-            } catch (err) {
-                console.error("Error:", err);
-            } finally {
+            if (!data) {
+                setError("Bank data not available");
                 setLoading(false);
+                return;
             }
+
+            setBank(data);
+
+            const userPos: Coordinates = await getCurrentLocation();
+            const bankPos: Coordinates = {
+                lat: parseFloat(data.latitude),
+                lng: parseFloat(data.longitude)
+            };
+
+            if (!isNaN(bankPos.lat) && !isNaN(bankPos.lng)) {
+                const d = calculateDistance(userPos, bankPos);
+                setDistance(d);
+            }
+
+            setLoading(false);
         }
+
         loadBankData();
     }, [bankId]);
 
@@ -51,6 +51,20 @@ export function BankViewPage({ bankId }: { bankId: string }) {
             <Loader2 className="animate-spin text-red-500" size={40} />
         </div>
     );
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                <p className="text-center text-red-600 text-lg font-semibold">{error}</p>
+                <Button
+                    variant="outline"
+                    onClick={() => router.back()}
+                >
+                    <ArrowLeft className="mr-2" size={18} /> Volver
+                </Button>
+            </div>
+        );
+    }
 
     if (!bank) return <p className="text-center p-10">Banco no encontrado.</p>;
 

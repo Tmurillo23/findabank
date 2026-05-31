@@ -16,25 +16,20 @@ export function CampaignsList() {
 
   useEffect(() => {
     const loadCampaigns = async () => {
-      try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-        if (!user) {
-          setError("No estás autenticado");
-          setLoading(false);
-          return;
-        }
-
-        setBankId(user.id);
-
-        const campaignsData = await getBankCampaigns(user.id);
-        setCampaigns(campaignsData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando campañas");
-      } finally {
+      if (!user) {
+        setError("No estás autenticado");
         setLoading(false);
+        return;
       }
+
+      setBankId(user.id);
+
+      const campaignsData = await getBankCampaigns(user.id);
+      setCampaigns(campaignsData);
+      setLoading(false);
     };
 
     loadCampaigns();

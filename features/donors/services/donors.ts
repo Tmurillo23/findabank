@@ -1,7 +1,9 @@
-import { createClient } from "@/shared/services/supabase/client";
-import { calculateDistance, Coordinates } from "@/shared/services/geolocalization/geolocalization";
-import type { DonorProfile } from "@/features/donors/types";
-import type { BankProfile } from "@/features/banks/types/bank-types";
+import {createClient} from "@/shared/services/supabase/client";
+import {calculateDistance, Coordinates} from "@/shared/services/geolocalization/geolocalization";
+import { mapSupabaseError } from "@/shared/services/errors";
+import type {DonorProfile} from "@/features/donors/types";
+import type {BankProfile} from "@/features/banks/types/bank-types";
+
 
 
 export async function fetchDonorData(donorId: string): Promise<DonorProfile | null> {
@@ -13,8 +15,8 @@ export async function fetchDonorData(donorId: string): Promise<DonorProfile | nu
     .eq("id", donorId)
     .single();
 
-  if (error && error.code !== "PGRST116") {
-    throw new Error("No se encontraron datos del donante");
+  if (error) {
+    throw mapSupabaseError(error);
   }
 
   return data as DonorProfile | null;
@@ -22,11 +24,16 @@ export async function fetchDonorData(donorId: string): Promise<DonorProfile | nu
 
 export async function updateDonorProfileInfo(upsertData: Partial<DonorProfile>) {
   const supabase = createClient();
-  const { error } = await supabase.from("donors").upsert(upsertData);
+
+  const { error } = await supabase
+    .from("donors")
+    .upsert(upsertData);
+
   if (error) {
-    throw error;
+    throw mapSupabaseError(error);
   }
 }
+
 
 export async function findNearbyBanks(
   userLocation: Coordinates,
@@ -39,24 +46,22 @@ export async function findNearbyBanks(
     .select("*");
 
   if (banksError) {
-    throw banksError;
+    throw mapSupabaseError(banksError);
   }
 
-  const processedBanks = (banksData as BankProfile[])
-    .map(bank => {
-      const lat = parseFloat(bank.latitude);
-      const lng = parseFloat(bank.longitude);
-      const isValidCoord = !isNaN(lat) && !isNaN(lng);
-      const distance = isValidCoord
-        ? calculateDistance(userLocation, { lat, lng })
-        : Infinity;
+  return (banksData as BankProfile[])
+      .map(bank => {
+          const lat = parseFloat(bank.latitude);
+          const lng = parseFloat(bank.longitude);
+          const isValidCoord = !isNaN(lat) && !isNaN(lng);
+          const distance = isValidCoord
+              ? calculateDistance(userLocation, {lat, lng})
+              : Infinity;
 
-      return { ...bank, distance };
-    })
-    .filter(bank => bank.distance <= radiusKm)
-    .sort((a, b) => a.distance - b.distance);
-
-  return processedBanks;
+          return {...bank, distance};
+      })
+      .filter(bank => bank.distance <= radiusKm)
+      .sort((a, b) => a.distance - b.distance);
 }
 
 

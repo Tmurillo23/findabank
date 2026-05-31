@@ -2,16 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared";
 import { Badge } from "@/shared/ui/badge";
+import {ActivityTimelineProps} from "@/features/banks/types";
 
-interface ActivityItem {
-  tipo_actividad: string;
-  fecha_actividad: string;
-  categoria: string;
-}
-
-interface ActivityTimelineProps {
-  activities: ActivityItem[];
-}
 
 export function ActivityTimeline({ activities }: ActivityTimelineProps) {
 

@@ -4,15 +4,10 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Label } from "@/shared";
 import { upsertMilkStock, getMilkStock } from "@/features/banks/services/bankStockService";
 import { createClient } from "@/shared/services/supabase/client";
-import type { MilkStock } from "@/features/banks/types/milkStock";
+import type {MilkStock} from "@/features/banks/types";
+import {MilkStockEditorProps} from "@/features/banks/types";
+import {STOCK_SITUATIONS, MILK_TYPES} from "@/features/banks/types";
 
-const MILK_TYPES = ["calostro", "leche_de_transicion", "leche_madura"] as const;
-const STOCK_SITUATIONS = ["suficiente", "critico", "no_hay"] as const;
-
-interface MilkStockEditorProps {
-  bancoId?: string;
-  readOnly?: boolean;
-}
 
 export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEditorProps) {
   const [stock, setStock] = useState<MilkStock[]>([]);
@@ -25,31 +20,27 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
 
   useEffect(() => {
     const fetchBankIdAndStock = async () => {
-      try {
-        let bankIdToUse = bancoId;
+      let bankIdToUse = bancoId;
 
-        // Si no se pasó bancoId, obtener del usuario autenticado
-        if (!bankIdToUse) {
-          const supabase = createClient();
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user?.id) {
-            setError("Usuario no autenticado");
-            return;
-          }
-          bankIdToUse = user.id;
+      if (!bankIdToUse) {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user?.id) {
+          setError("Usuario no autenticado");
+          return;
         }
 
-        console.log('Using bankId:', bankIdToUse);
-        setCurrentBankId(bankIdToUse);
-
-        const data = await getMilkStock(bankIdToUse);
-        setStock(data);
-        const found = data.find((s) => s.tipo_leche === "leche_madura");
-        setSituation(found?.situacion ?? "suficiente");
-      } catch (err) {
-        console.error("Error loading stock:", err);
-        setError("Error cargando stock");
+        bankIdToUse = user.id;
       }
+
+      setCurrentBankId(bankIdToUse);
+
+      const data = await getMilkStock(bankIdToUse);
+      setStock(data);
+
+      const found = data.find((s) => s.tipo_leche === "leche_madura");
+      setSituation(found?.situacion ?? "suficiente");
     };
 
     fetchBankIdAndStock();
@@ -165,28 +156,23 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
               setIsSaving(true);
               setError(null);
 
-              try {
-                const updated = await upsertMilkStock({
-                  banco_id: currentBankId,
-                  tipo_leche: milkType,
-                  situacion: situation,
-                });
-                setStock((prev) => {
-                  const next = [...prev];
-                  const index = next.findIndex(s => s.tipo_leche === updated.tipo_leche);
-                  if (index > -1) next[index] = updated;
-                  else next.push(updated);
-                  return next;
-                });
-                setSuccessMessage("Stock de leche actualizado correctamente");
-                setTimeout(() => setSuccessMessage(null), 1500);
-              } catch (err) {
-                const message = err instanceof Error ? err.message : "Error desconocido";
-                setError(message);
-                console.error("Error saving milk stock:", err);
-              } finally {
-                setIsSaving(false);
-              }
+              const updated = await upsertMilkStock({
+                banco_id: currentBankId,
+                tipo_leche: milkType,
+                situacion: situation,
+              });
+
+              setStock((prev) => {
+                const next = [...prev];
+                const index = next.findIndex(s => s.tipo_leche === updated.tipo_leche);
+                if (index > -1) next[index] = updated;
+                else next.push(updated);
+                return next;
+              });
+
+              setSuccessMessage("Stock de leche actualizado correctamente");
+              setTimeout(() => setSuccessMessage(null), 1500);
+              setIsSaving(false);
             }}
             className="w-full mt-6"
             disabled={isSaving}

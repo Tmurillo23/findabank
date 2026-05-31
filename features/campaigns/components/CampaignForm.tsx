@@ -4,7 +4,6 @@ import { useState } from "react";
 import { createCampaign } from "@/features/campaigns/services";
 import  {CampaignFormProps } from "@/features/campaigns/types";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
-import {getCurrentLocation} from "@/shared/services/geolocalization";
 
 
 
@@ -13,69 +12,47 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
   const [descripcion, setDescripcion] = useState("");
   const [ubicacion, setUbicacion] = useState("");
   const [fecha, setFecha] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGetLocation = async () => {
-    try {
-      const coords = await getCurrentLocation();
-      setLatitude(coords.lat.toString());
-      setLongitude(coords.lng.toString());
-    } catch {
-      setError("No se pudo obtener tu ubicación. Ingresa manualmente.");
-    }
-  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
 
-    try {
-
-      if (!nombre.trim()) {
-        setError("El nombre de la campaña es requerido");
-        return;
-      }
-
-      if (!ubicacion.trim()) {
-        setError("La ubicación es requerida");
-        return;
-      }
-
-      if (!fecha) {
-        setError("La fecha es requerida");
-        return;
-      }
-
-      if (!latitude || !longitude) {
-        setError("Debes completar ubicación y radio");
-        return;
-      }
-
-      const newCampaign = await createCampaign({
-        banco_id: bankId,
-        nombre: nombre.trim(),
-        descripcion: descripcion.trim() || undefined,
-        ubicacion: ubicacion.trim(),
-        fecha,
-      });
-      // Aquí sería que aparte de crear la campaña también llame a la función que se va a encargar e enviar los emails y se le pasaría  esa función el array de emails y otras cosas que dependerán del tipo de librería para enviar emails (si es con resend se le mandaría también el mensaje y el subject que sería el nombre de la campaña)
-      // Limpiar formulario
-      setNombre("");
-      setDescripcion("");
-      setUbicacion("");
-      setFecha("");
-      setLatitude("");
-      setLongitude("");
-
-      onCampaignCreated(newCampaign);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al crear campaña");
-    } finally {
+    if (!nombre.trim()) {
+      setError("El nombre de la campaña es requerido");
       setIsLoading(false);
+      return;
     }
+
+    if (!ubicacion.trim()) {
+      setError("La ubicación es requerida");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!fecha) {
+      setError("La fecha es requerida");
+      setIsLoading(false);
+      return;
+    }
+
+    const newCampaign = await createCampaign({
+      banco_id: bankId,
+      nombre: nombre.trim(),
+      descripcion: descripcion.trim() || undefined,
+      ubicacion: ubicacion.trim(),
+      fecha,
+    });
+
+    setNombre("");
+    setDescripcion("");
+    setUbicacion("");
+    setFecha("");
+
+    setIsLoading(false);
+    onCampaignCreated(newCampaign);
   };
 
   return (
@@ -138,24 +115,7 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
               />
             </div>
 
-            {/* Sección de Geolocalización */}
-            <div className="border-t pt-6 space-y-4">
 
-              {/* Botón de Geolocalización */}
-              <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGetLocation}
-                  className="w-full"
-              >
-                {/*Aquí sería que esto se vea más bonito*/}
-                {latitude && longitude
-                    ? ` Ubicación: ${parseFloat(latitude).toFixed(4)}, ${parseFloat(longitude).toFixed(4)}`
-                    : " Obtener Mi Ubicación"}
-              </Button>
-
-
-            </div>
 
 
 

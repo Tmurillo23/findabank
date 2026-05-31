@@ -50,44 +50,36 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
 
   useEffect(() => {
     const initializeBankForm = async () => {
-      try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-        if (!user) {
-          setProfileError("No estás autenticado");
-          setLoadingConfig(false);
-          return;
-        }
-
-        // Establecer el ID del banco
-        setBankId(user.id);
-
-        // Determinar el tipo de banco
-        let currentType: "sangre" | "leche" = "sangre";
-        if (initialRole === "milk_bank") {
-          currentType = "leche";
-        } else if (user.user_metadata?.role === "milk_bank") {
-          currentType = "leche";
-        }
-        setBankType(currentType);
-
-        // Cargar datos existentes del banco
-        const bankData = await fetchBankData(user.id);
-        if (bankData) {
-          setBankName(bankData.nombre || "");
-          setEditNombre(bankData.nombre || "");
-          setEditDireccion(bankData.direccion || "");
-          setEditDescripcion(bankData.descripcion || "");
-          setEditLatitude(bankData.latitude?.toString() || "");
-          setEditLongitude(bankData.longitude?.toString() || "");
-        }
-
-      } catch (err) {
-        setProfileError(err instanceof Error ? err.message : "Error al inicializar el formulario");
-      } finally {
+      if (!user) {
+        setProfileError("No estás autenticado");
         setLoadingConfig(false);
+        return;
       }
+
+      setBankId(user.id);
+
+      let currentType: "sangre" | "leche" = "sangre";
+      if (initialRole === "milk_bank") {
+        currentType = "leche";
+      } else if (user.user_metadata?.role === "milk_bank") {
+        currentType = "leche";
+      }
+      setBankType(currentType);
+
+      const bankData = await fetchBankData(user.id);
+      if (bankData) {
+        setBankName(bankData.nombre || "");
+        setEditNombre(bankData.nombre || "");
+        setEditDireccion(bankData.direccion || "");
+        setEditDescripcion(bankData.descripcion || "");
+        setEditLatitude(bankData.latitude?.toString() || "");
+        setEditLongitude(bankData.longitude?.toString() || "");
+      }
+
+      setLoadingConfig(false);
     };
 
     initializeBankForm();
@@ -153,7 +145,6 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
                     setIsSavingProfile(true);
                     setProfileError(null);
 
-                    // Validaciones
                     if (!editNombre || editNombre.trim() === "") {
                       setProfileError("El nombre del banco es requerido.");
                       setIsSavingProfile(false);
@@ -172,25 +163,19 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
                       return;
                     }
 
-                    try {
-                      const updates: Record<string, string> = {
-                        nombre: editNombre.trim(),
-                        tipo: bankType === "leche" ? "leche" : "sangre",
-                        direccion: editDireccion.trim(),
-                        descripcion: editDescripcion.trim(),
-                        latitude: editLatitude,
-                        longitude: editLongitude,
-                      };
+                    const updates: Record<string, string> = {
+                      nombre: editNombre.trim(),
+                      tipo: bankType === "leche" ? "leche" : "sangre",
+                      direccion: editDireccion.trim(),
+                      descripcion: editDescripcion.trim(),
+                      latitude: editLatitude,
+                      longitude: editLongitude,
+                    };
 
-                      await updateBankProfileInfo(bankId, updates);
+                    await updateBankProfileInfo(bankId, updates);
 
-                      setSuccessMessage("Perfil actualizado correctamente.");
-                      setTimeout(() => router.push("/bank"), 1500);
-                    } catch (err: unknown) {
-                      setProfileError(err instanceof Error ? err.message : "Error al actualizar perfil");
-                    } finally {
-                      setIsSavingProfile(false);
-                    }
+                    setSuccessMessage("Perfil actualizado correctamente.");
+                    setTimeout(() => router.push("/bank"), 1500);
                   }}
                   className="space-y-6"
                 >
@@ -236,16 +221,11 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
                       onClick={async () => {
                         setGeoLoading(true);
                         setProfileError(null);
-                        try {
-                          const { getCurrentLocation } = await import("@/shared/services/geolocalization");
-                          const coords = await getCurrentLocation();
-                          setEditLatitude(coords.lat.toString());
-                          setEditLongitude(coords.lng.toString());
-                        } catch {
-                          setProfileError("No se pudo obtener tu ubicacion. Ingresa manualmente.");
-                        } finally {
-                          setGeoLoading(false);
-                        }
+                        const { getCurrentLocation } = await import("@/shared/services/geolocalization");
+                        const coords = await getCurrentLocation();
+                        setEditLatitude(coords.lat.toString());
+                        setEditLongitude(coords.lng.toString());
+                        setGeoLoading(false);
                       }}
                       disabled={geoLoading}
                     >
