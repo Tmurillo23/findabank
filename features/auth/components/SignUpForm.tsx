@@ -84,7 +84,7 @@ export function SignUpForm({
               >
                 <option value="donor">Donante</option>
                 <option value="blood_bank">Banco de Sangre</option>
-                <option value="milk_bank">Banco de Leche</option>
+                <option value="milk_bank">Banco de Leche Materna</option>
               </select>
             </div>
 
@@ -93,6 +93,7 @@ export function SignUpForm({
               <Input
                 id="password"
                 type="password"
+                placeholder="*******"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -103,6 +104,7 @@ export function SignUpForm({
               <Input
                 id="repeat-password"
                 type="password"
+                placeholder="*******"
                 required
                 value={repeatPassword}
                 onChange={(e) => setRepeatPassword(e.target.value)}

@@ -9,7 +9,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "FindABank",
+  title: "FindADonor",
   description: "Conecta donantes y bancos de sangre y leche con una experiencia clara y confiable",
 };
 
