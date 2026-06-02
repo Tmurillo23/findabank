@@ -19,7 +19,6 @@ export function DonorDashboard() {
         const fetchDonorDataHandler = async () => {
             const supabase = createClient();
 
-            // Obtener usuario autenticado
             const {
                 data: { user },
             } = await supabase.auth.getUser();
@@ -29,7 +28,6 @@ export function DonorDashboard() {
                 return;
             }
 
-            // Obtener datos del donante
             const data = await fetchDonorData(user.id);
 
             if (!data) {

@@ -6,11 +6,7 @@ import { AuthenticationError } from "@/features/AppErrors";
 import { UpdateDonorProfileInput } from "@/features/donors/types";
 import { UpdateBankProfileInput, BANK_TYPE_MAP } from "@/features/banks/types";
 
-/**
- * Creates a donor profile for the authenticated user
- * @throws AuthenticationError if no user is authenticated
- * @throws SupabaseError for database errors
- */
+
 export async function createDonorProfile(input: UpdateDonorProfileInput) {
   const supabase = await createClient();
 
@@ -43,11 +39,7 @@ export async function createDonorProfile(input: UpdateDonorProfileInput) {
   return data;
 }
 
-/**
- * Creates a bank profile for the authenticated user
- * @throws AuthenticationError if no user is authenticated
- * @throws SupabaseError for database errors
- */
+
 export async function createBankProfile(input: UpdateBankProfileInput) {
   const supabase = await createClient();
 

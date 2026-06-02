@@ -63,7 +63,6 @@ export function CampaignsList() {
               </Button>
             </div>
 
-            {/* Formulario desplegable */}
             {showForm && (
                 <div className="mb-8 animate-in fade-in slide-in-from-top-2">
                   <CampaignForm bankId={bankId} onCampaignCreated={handleCampaignCreated} />
@@ -76,7 +75,6 @@ export function CampaignsList() {
                 </div>
             )}
 
-            {/* Lista de campañas */}
             <div className="space-y-4">
               {campaigns.length === 0 ? (
                   <Card>

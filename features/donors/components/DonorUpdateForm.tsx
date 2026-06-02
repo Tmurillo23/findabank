@@ -109,17 +109,19 @@ const saveProfile = async () => {
       correo: donor.correo,
     };
 
-    try {
-      await updateDonorProfileInfo(upsertData);
-      setSuccessMessage("Perfil guardado correctamente.");
-      setTimeout(() => {
-        router.push("/donor");
-      }, 700);
-    } catch (error) {
-      setFormError("Hubo un error al guardar el perfil. Intenta nuevamente.");
-    } finally {
-      setIsLoading(false);
-    }
+    await updateDonorProfileInfo(upsertData)
+      .then(() => {
+        setSuccessMessage("Perfil guardado correctamente.");
+        setTimeout(() => {
+          router.push("/donor");
+        }, 700);
+      })
+      .catch(() => {
+        setFormError("Hubo un error al guardar el perfil. Intenta nuevamente.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -144,6 +146,12 @@ const saveProfile = async () => {
   }
 
   if (!donor) return null;
+
+  const locationButtonText = geoLoading
+    ? "Obteniendo ubicación..."
+    : latitude && longitude
+      ? "Actualizar Ubicación"
+      : "Obtener Ubicación";
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -229,7 +237,6 @@ const saveProfile = async () => {
                 />
               </div>
 
-              {/* Ubicación */}
               <div className="grid gap-2">
                 <Label>Ubicación</Label>
                 <div className="flex gap-2">
@@ -240,7 +247,7 @@ const saveProfile = async () => {
                     className="w-full"
                     variant="outline"
                   >
-                    {geoLoading ? "Obteniendo ubicación..." : latitude && longitude ? "Actualizar Ubicación" : "Obtener Ubicación"}
+                        {locationButtonText}
                   </Button>
                 </div>
                 {latitude && longitude && (

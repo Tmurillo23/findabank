@@ -30,14 +30,11 @@ export function LoginForm({
     setError(null);
     setIsLoading(true);
 
-    // Usar encadenamiento de promesas en lugar de try/catch
     signInWithPassword(email, password)
       .then(() => {
-        // redirectByRole lanza el error especial NEXT_REDIRECT que Next manejará
         return redirectByRole();
       })
       .catch((err) => {
-        // Re-lanzar redirecciones internas de Next.js para que no se muestren
         if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
           throw err;
         }

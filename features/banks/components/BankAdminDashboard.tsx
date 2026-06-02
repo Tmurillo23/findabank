@@ -23,7 +23,6 @@ export function BankAdminDashboard() {
         const fetchBankDataHandler = async () => {
             const supabase = createClient();
 
-            // Obtener usuario autenticado
             const {
                 data: { user },
             } = await supabase.auth.getUser();
@@ -47,7 +46,6 @@ export function BankAdminDashboard() {
 
             setBank(data as BankData);
 
-            // Fetch inicial de métricas y estadísticas
             await fetchDashboardData(user.id);
 
             setLoading(false);
@@ -81,6 +79,7 @@ export function BankAdminDashboard() {
         if (!bank) return;
 
         const supabase = createClient();
+        // Campañas
 
         const campaignChannel = supabase
             .channel('campaign_changes')
@@ -93,7 +92,7 @@ export function BankAdminDashboard() {
                 fetchDashboardData(bank.id);
             })
             .subscribe();
-
+// stock
         const stockChannel = supabase
             .channel('stock_changes')
             .on('postgres_changes', {
@@ -138,7 +137,6 @@ export function BankAdminDashboard() {
     return (
         <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
-                {/* Header con botón de volver */}
                 <div className="mb-6 flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl font-bold">
@@ -217,13 +215,11 @@ export function BankAdminDashboard() {
                         {isBloodBank && <BloodStockEditor readOnly={true} />}
                         {isMilkBank && <MilkStockEditor readOnly={true} />}
 
-                        {/* Estadísticas de Campañas */}
                         <div className="mt-6">
                             {metrics && <CampaignStatistics metrics={metrics} />}
                         </div>
                     </div>
 
-                    {/* Información del Banco */}
                     <div className="space-y-4">
                         <Card>
                             <CardHeader>
@@ -270,7 +266,6 @@ export function BankAdminDashboard() {
                     </div>
                 </div>
 
-                {/* Timeline de Actividades */}
                 <div className="mb-8">
                     <ActivityTimeline activities={activities} />
                 </div>
