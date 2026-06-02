@@ -74,7 +74,6 @@ export function DonorProfileForm({
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
-              {/* Nombre Completo */}
               <div className="grid gap-2">
                 <Label htmlFor="fullName">Nombre Completo</Label>
                 <Input
@@ -87,7 +86,6 @@ export function DonorProfileForm({
                 />
               </div>
 
-              {/* Tipo de Sangre */}
               <div className="grid gap-2">
                 <Label htmlFor="bloodType">Tipo de Sangre</Label>
                 <select
@@ -106,7 +104,6 @@ export function DonorProfileForm({
               </div>
 
 
-              {/* Ubicación */}
               <div className="space-y-3">
                 <Label>Ubicación Geográfica</Label>
                 <Button
@@ -149,7 +146,6 @@ export function DonorProfileForm({
 
 
 
-              {/* ¿Puedes donar leche? */}
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
@@ -163,7 +159,6 @@ export function DonorProfileForm({
                 </Label>
               </div>
 
-              {/* Descripción (opcional) */}
               <div className="grid gap-2">
                 <Label htmlFor="description">Información Adicional (Opcional)</Label>
                 <textarea

@@ -65,7 +65,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFor
         </CardHeader>
         <CardContent className="pt-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Nombre */}
             <div className="grid gap-2">
               <Label htmlFor="nombre">Nombre de la Campaña *</Label>
               <Input
@@ -78,7 +77,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFor
               />
             </div>
 
-            {/* Descripción */}
             <div className="grid gap-2">
               <Label htmlFor="descripcion">Descripción (Opcional)</Label>
               <textarea
@@ -90,7 +88,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFor
               />
             </div>
 
-            {/* Ubicación */}
             <div className="grid gap-2">
               <Label htmlFor="ubicacion">Ubicación *</Label>
               <Input
@@ -103,7 +100,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFor
               />
             </div>
 
-            {/* Fecha */}
             <div className="grid gap-2">
               <Label htmlFor="fecha">Fecha de la Campaña *</Label>
               <Input
@@ -119,7 +115,6 @@ export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFor
 
 
 
-            {/* Mensaje de error */}
             {error && (
                 <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
                   {error}

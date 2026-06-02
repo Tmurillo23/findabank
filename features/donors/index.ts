@@ -1,9 +1,9 @@
 // Componentes de Donantes
-export { } from './components';
+export * from './components';
 
 // Tipos
-export type { DonorProfile, CreateDonorProfileInput, UpdateDonorProfileInput, BloodType } from './types';
+export type * from './types';
 
 // Servicios
-export { } from './services';
+export * from './services';
 

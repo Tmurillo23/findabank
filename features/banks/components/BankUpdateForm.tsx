@@ -209,7 +209,6 @@ export function BankUpdateForm({ initialRole }: Readonly<{ initialRole?: "blood_
                     />
                   </div>
 
-                  {/* Ubicacion */}
                   <div className="space-y-3">
                     <Label>Ubicacion Geografica</Label>
                     <Button

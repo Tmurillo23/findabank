@@ -1,6 +1,5 @@
 import { LoginForm } from "@/features/auth";
 
-// IMPORTANTE: Asegúrate de que diga "export default function Page()"
 export default function Page() {
   return (
     <div className="space-y-4 text-slate-900">

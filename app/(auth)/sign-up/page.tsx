@@ -22,10 +22,8 @@ import { SignUpForm } from "@/features/auth";
 
 export default function Page() {
   return (
-    // Eliminamos las pantallas duplicadas y dejamos un contenedor que hereda el layout
     <div className="space-y-5 text-slate-900">
       
-      {/* Encabezado interno alineado estéticamente con el Login */}
       <div className="text-center mb-2">
         <h2 className="text-xl font-black text-slate-900">Crear cuenta</h2>
         <p className="text-xs text-slate-400 mt-1">
@@ -33,7 +31,6 @@ export default function Page() {
         </p>
       </div>
       
-      {/* Tu componente ahora se estirará de forma natural hasta tocar los bordes perfectos del layout */}
       <SignUpForm />
       
     </div>

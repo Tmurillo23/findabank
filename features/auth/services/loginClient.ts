@@ -15,7 +15,6 @@ export async function signInWithPassword(email: string, password: string) {
     if (mappedError) {
       throw mappedError;
     }
-    // Si mapSupabaseError retorna null, lanzar error genérico
     throw new Error("Credenciales inválidas. Por favor intenta de nuevo.");
   }
 

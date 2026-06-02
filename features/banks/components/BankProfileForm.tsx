@@ -74,7 +74,6 @@ export function BankProfileForm({
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
-              {/* Nombre del Banco */}
               <div className="grid gap-2">
                 <Label htmlFor="nombre">Nombre del {bankTypeLabel}</Label>
                 <Input
@@ -87,7 +86,6 @@ export function BankProfileForm({
                 />
               </div>
 
-              {/* Dirección */}
               <div className="grid gap-2">
                 <Label htmlFor="direccion">Dirección</Label>
                 <Input
@@ -100,7 +98,6 @@ export function BankProfileForm({
                 />
               </div>
 
-              {/* Ubicación */}
               <div className="space-y-3">
                 <Label>Ubicación Geográfica</Label>
                 <Button
@@ -141,7 +138,6 @@ export function BankProfileForm({
                 </div>
               </div>
 
-              {/* Descripción  */}
               <div className="grid gap-2">
                 <Label htmlFor="descripcion">Descripción (Opcional)</Label>
                 <textarea

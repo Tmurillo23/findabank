@@ -1,6 +1,6 @@
 // Componentes de Bancos
-export { } from './components';
+export *  from './components';
 
 // Servicios
-export { } from './services';
+export * from './services';
 
