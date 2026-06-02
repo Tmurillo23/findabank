@@ -136,142 +136,159 @@ export function BankAdminDashboard() {
     const isBloodBank = bank?.tipo === "sangre";
 
     return (
-        <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
-                {/* Header con botón de volver */}
-                <div className="mb-6 flex items-center justify-between">
+                {/* Header */}
+                <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
                     <div>
-                        <h1 className="text-4xl font-bold">
-                            {isBloodBank ? `Mi Banco de Sangre ${bank?.nombre}` : `Mi Banco de Leche ${bank?.nombre}`}
+                        <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                            {isBloodBank ? "Banco de Sangre" : "Banco de Leche"}
+                        </p>
+                        <h1 className="text-5xl font-bold text-slate-900 mb-2">
+                            {bank?.nombre}
                         </h1>
-                        <p className="mt-2 text-muted-foreground">
-                            Bienvenido a {bank?.nombre}
+                        <p className="text-lg text-slate-600">
+                            Gestión centralizada de tu inventario y campañas
                         </p>
                     </div>
-                    <Button asChild variant="outline" className="gap-2">
+                    <Button asChild variant="outline" className="gap-2 sm:self-center">
                         <Link href="/">
                             <ArrowLeft size={18} />
-                            Ir al inicio
+                            Volver al inicio
                         </Link>
                     </Button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
-                    <Card className="border-blue-100 bg-blue-50">
-                        <CardHeader>
-                            <CardTitle className="text-base">Total Stock</CardTitle>
+                {/* Métricas */}
+                <div className="flex gap-4 mb-10 overflow-x-auto pb-2 flex-nowrap">
+                    <Card className="border-0 bg-white shadow-md hover:shadow-lg transition-shadow flex-shrink-0 w-48">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold text-slate-600">Total Stock</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-3xl font-bold">{metrics?.total_items_stock ?? 0}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Items totales en inventario</p>
+                            <p className="text-4xl font-bold text-slate-900">{metrics?.total_items_stock ?? 0}</p>
+                            <p className="text-xs text-slate-500 mt-2">Items en inventario</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-green-100 bg-green-50">
-                        <CardHeader>
-                            <CardTitle className="text-base">Suficiente</CardTitle>
+                    <Card className="border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 w-48">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold text-emerald-700">Suficiente</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-3xl font-bold text-green-700">{metrics?.items_suficiente ?? 0}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Items con stock adecuado</p>
+                            <p className="text-4xl font-bold text-emerald-900">{metrics?.items_suficiente ?? 0}</p>
+                            <p className="text-xs text-emerald-600 mt-2">Stock adecuado</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-red-100 bg-red-50">
-                        <CardHeader>
-                            <CardTitle className="text-base">Crítico</CardTitle>
+                    <Card className="border-0 bg-gradient-to-br from-rose-50 to-rose-100 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 w-48">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold text-rose-700">Crítico</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-3xl font-bold text-red-700">{metrics?.items_critico ?? 0}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Items que requieren atención</p>
+                            <p className="text-4xl font-bold text-rose-900">{metrics?.items_critico ?? 0}</p>
+                            <p className="text-xs text-rose-600 mt-2">Requieren atención</p>
                         </CardContent>
                     </Card>
 
                     {isMilkBank && (
-                        <Card className="border-gray-100 bg-white">
-                            <CardHeader>
-                                <CardTitle className="text-base">No hay</CardTitle>
+                        <Card className="border-0 bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 w-48">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-sm font-semibold text-amber-700">Sin Stock</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-3xl font-bold text-gray-700">{metrics?.items_agotado ?? 0}</p>
-                                <p className="text-sm text-muted-foreground mt-2">Items sin stock</p>
+                                <p className="text-4xl font-bold text-amber-900">{metrics?.items_agotado ?? 0}</p>
+                                <p className="text-xs text-amber-600 mt-2">Items agotados</p>
                             </CardContent>
                         </Card>
                     )}
 
-                    <Card className="border-gray-100 bg-white">
-                        <CardHeader>
-                            <CardTitle className="text-base">Campañas</CardTitle>
+                    <Card className="border-0 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md hover:shadow-lg transition-shadow flex-shrink-0 w-48">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold text-blue-700">Campañas</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-3xl font-bold">{metrics?.campanas_activas ?? 0}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Campañas activas ahora</p>
+                            <p className="text-4xl font-bold text-blue-900">{metrics?.campanas_activas ?? 0}</p>
+                            <p className="text-xs text-blue-600 mt-2">Activas ahora</p>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Grid de contenido */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {/* Sección Principal */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-10">
                     {/* Stock Display */}
-                    <div className="lg:col-span-2">
-                        {isBloodBank && <BloodStockEditor readOnly={true} />}
-                        {isMilkBank && <MilkStockEditor readOnly={true} />}
+                    <div className="lg:col-span-3 space-y-6">
+                        {/* Inventario */}
+                        <div className="bg-white rounded-xl shadow-md border-0 overflow-hidden">
+                            {isBloodBank && <BloodStockEditor readOnly={true} />}
+                            {isMilkBank && <MilkStockEditor readOnly={true} />}
+                        </div>
 
                         {/* Estadísticas de Campañas */}
-                        <div className="mt-6">
-                            {metrics && <CampaignStatistics metrics={metrics} />}
-                        </div>
+                        {metrics && (
+                            <div className="bg-white rounded-xl shadow-md border-0 overflow-hidden p-6">
+                                <CampaignStatistics metrics={metrics} />
+                            </div>
+                        )}
                     </div>
 
                     {/* Información del Banco */}
-                    <div className="space-y-4">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Información del Banco</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Nombre</p>
-                                    <p className="font-semibold">{bank?.nombre}</p>
+                    <Card className="lg:col-span-1 border-0 shadow-md h-fit">
+                        <CardHeader>
+                            <CardTitle className="text-xl font-bold text-slate-900">Detalles</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <div>
+                                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Nombre</p>
+                                <p className="text-base font-medium text-slate-900 mt-2">{bank?.nombre}</p>
+                            </div>
+                            <div className="pt-3 border-t border-slate-200">
+                                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Tipo</p>
+                                <p className="text-base font-medium text-slate-900 mt-2">
+                                    {isBloodBank ? "🩸 Banco de Sangre" : "🥛 Banco de Leche"}
+                                </p>
+                            </div>
+                            <div className="pt-3 border-t border-slate-200">
+                                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Dirección</p>
+                                <p className="text-base text-slate-700 mt-2">{bank?.direccion}</p>
+                            </div>
+                            {bank?.descripcion && (
+                                <div className="pt-3 border-t border-slate-200">
+                                    <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Descripción</p>
+                                    <p className="text-base text-slate-700 mt-2">{bank.descripcion}</p>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Dirección</p>
-                                    <p className="text-sm">{bank?.direccion}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Tipo</p>
-                                    <p className="font-semibold">
-                                        {isBloodBank ? "Banco de Sangre" : "Banco de Leche"}
-                                    </p>
-                                </div>
-                                {bank?.descripcion && (
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Descripción</p>
-                                        <p className="text-sm">{bank.descripcion}</p>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                            )}
+                        </CardContent>
+                    </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg">Acciones Rápidas</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <Button className="w-full" onClick={() => router.push('/bank/update-profile')}>
-                                    Configuración
+                    {/* Acciones Rápidas */}
+                    <Card className="lg:col-span-1 border-0 shadow-md bg-gradient-to-br from-slate-50 to-slate-100 h-fit">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-bold text-slate-900">Acciones</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <div className="flex flex-col items-center gap-3">
+                                <Button 
+                                    className="w-48 px-6 py-2 font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors" 
+                                    onClick={() => router.push('/bank/update-profile')}
+                                >
+                                    ⚙️ Configuración
                                 </Button>
-                                <Button variant="secondary" className="w-full" onClick={() => router.push('/bank/campaigns')}>
-                                    Gestionar Campañas
+                                <Button 
+                                    variant="secondary" 
+                                    className="w-48 px-6 py-2 font-semibold" 
+                                    onClick={() => router.push('/bank/campaigns')}
+                                >
+                                    📢 Gestionar Campañas
                                 </Button>
-                            </CardContent>
-                        </Card>
-
-                    </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* Timeline de Actividades */}
-                <div className="mb-8">
+                <div className="bg-white rounded-xl shadow-md border-0 p-6">
+                    <h2 className="text-xl font-bold text-slate-900 mb-6">Actividad Reciente</h2>
                     <ActivityTimeline activities={activities} />
                 </div>
             </div>
