@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/shared/services/supabase/client";
 import { BloodStockEditor, MilkStockEditor, ActivityTimeline, CampaignStatistics } from "@/features/banks/components";
 import { Card, CardContent, CardHeader, CardTitle, Button } from "@/shared";
@@ -136,14 +138,22 @@ export function BankAdminDashboard() {
     return (
         <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
-                {/* Header */}
-                <div className="mb-6">
-                    <h1 className="text-4xl font-bold">
-                        {isBloodBank ? `Mi Banco de Sangre ${bank?.nombre}` : `Mi Banco de Leche ${bank?.nombre}`}
-                    </h1>
-                    <p className="mt-2 text-muted-foreground">
-                        Bienvenido a {bank?.nombre}
-                    </p>
+                {/* Header con botón de volver */}
+                <div className="mb-6 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-bold">
+                            {isBloodBank ? `Mi Banco de Sangre ${bank?.nombre}` : `Mi Banco de Leche ${bank?.nombre}`}
+                        </h1>
+                        <p className="mt-2 text-muted-foreground">
+                            Bienvenido a {bank?.nombre}
+                        </p>
+                    </div>
+                    <Button asChild variant="outline" className="gap-2">
+                        <Link href="/">
+                            <ArrowLeft size={18} />
+                            Ir al inicio
+                        </Link>
+                    </Button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">

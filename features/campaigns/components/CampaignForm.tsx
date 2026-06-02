@@ -130,7 +130,17 @@ export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFor
             <div className="flex gap-4 pt-4 border-t">
               <Button
                   type="submit"
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1"
+                  style={{
+                    backgroundColor: "#10b981",
+                    color: "white",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLButtonElement).style.backgroundColor = "#059669";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLButtonElement).style.backgroundColor = "#10b981";
+                  }}
                   disabled={isLoading}
               >
                 {isLoading ? "Creando..." : "Crear Campaña"}

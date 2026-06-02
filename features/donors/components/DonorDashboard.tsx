@@ -65,18 +65,15 @@ export function DonorDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
-                {/* Header */}
-                <div className="mb-6">
-                    <h1 className="text-4xl font-bold">Mi Perfil de Donante</h1>
-                    <p className="mt-2 text-muted-foreground">
-                        Bienvenido, {donor?.full_name}
-                    </p>
+                <div className="mb-8 max-w-3xl">
+                    <h1 className="text-4xl font-bold tracking-tight text-slate-950">Mi Perfil de Donante</h1>
+                    <p className="mt-2 text-slate-600">Bienvenido, {donor?.full_name}</p>
                 </div>
 
                 {!isProfileComplete && (
-                    <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4 mb-6 text-orange-900">
+                    <div className="rounded-[2rem] border border-orange-200 bg-orange-50 p-5 mb-8 text-orange-900 shadow-sm">
                         <p className="font-semibold">Tu perfil está incompleto</p>
                         <p className="text-sm mt-1">
                             Completa tu información para recibir campañas más adecuadas y mejorar tus oportunidades de donación.
@@ -84,152 +81,137 @@ export function DonorDashboard() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <Card className="border-blue-100 bg-blue-50">
+                <div
+                    className="mb-10 gap-4"
+                    style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', alignItems: 'stretch' }}
+                >
+                    <Card className="rounded-[2rem] border border-blue-100 bg-blue-50/90 min-h-[170px]">
                         <CardHeader>
                             <CardTitle className="text-base">Perfil</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-3xl font-bold">{isProfileComplete ? 'Completo' : 'Incompleto'}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Actualiza tu información</p>
+                        <CardContent className="pt-0 pb-6">
+                            <p className="text-3xl font-bold text-slate-950">{isProfileComplete ? 'Completo' : 'Incompleto'}</p>
+                            <p className="text-sm text-slate-600 mt-2">Actualiza tu información</p>
                         </CardContent>
                     </Card>
-                    <Card className="border-green-100 bg-green-50">
+                    <Card className="rounded-[2rem] border border-emerald-100 bg-emerald-50/90 min-h-[170px]">
                         <CardHeader>
                             <CardTitle className="text-base">Sangre</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-3xl font-bold">{donor?.blood_type || '-'}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Tipo de sangre registrado</p>
+                        <CardContent className="pt-0 pb-6">
+                            <p className="text-3xl font-bold text-slate-950">{donor?.blood_type || '-'}</p>
+                            <p className="text-sm text-slate-600 mt-2">Tipo de sangre registrado</p>
                         </CardContent>
                     </Card>
-                    <Card className={`border ${donor?.puede_donar_leche ? 'border-green-100 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+                    <Card className={`rounded-[2rem] border ${donor?.puede_donar_leche ? 'border-emerald-100 bg-emerald-50/90' : 'border-slate-200 bg-slate-50/90'} min-h-[170px]`}>
                         <CardHeader>
                             <CardTitle className="text-base">Leche</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-3xl font-bold">{donor?.puede_donar_leche ? 'Sí' : 'No'}</p>
-                            <p className="text-sm text-muted-foreground mt-2">Donación de leche</p>
+                        <CardContent className="pt-0 pb-6">
+                            <p className="text-3xl font-bold text-slate-950">{donor?.puede_donar_leche ? 'Sí' : 'No'}</p>
+                            <p className="text-sm text-slate-600 mt-2">Donación de leche</p>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Grid de contenido */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Información Personal */}
-                    <Card className="lg:col-span-2">
+                <div
+                    className="mb-10 gap-6"
+                    style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)' }}
+                >
+                    <Card className="rounded-[2rem] border border-slate-200 bg-white shadow-sm">
                         <CardHeader>
                             <CardTitle>Información Personal</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-5 py-6">
                             <div>
-                                <p className="text-sm text-muted-foreground">Nombre Completo</p>
-                                <p className="text-lg font-semibold">{donor?.full_name}</p>
+                                <p className="text-sm text-slate-500">Nombre Completo</p>
+                                <p className="text-lg font-semibold text-slate-950">{donor?.full_name}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Tipo de Sangre</p>
-                                <p className="text-lg font-semibold">{donor?.blood_type}</p>
+                                <p className="text-sm text-slate-500">Tipo de Sangre</p>
+                                <p className="text-lg font-semibold text-slate-950">{donor?.blood_type}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Puedo donar leche materna?
-                                </p>
-                                <p className="text-lg font-semibold">
-                                    {donor?.puede_donar_leche ? "Sí" : "No"}
-                                </p>
+                                <p className="text-sm text-slate-500">Puedo donar leche materna?</p>
+                                <p className="text-lg font-semibold text-slate-950">{donor?.puede_donar_leche ? 'Sí' : 'No'}</p>
                             </div>
                             {donor?.description && (
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Descripción</p>
-                                    <p className="text-base">{donor.description}</p>
-                                </div>
-                            )}
-                            {donor?.location && (
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Ubicación Registrada</p>
-                                    <p className="text-sm bg-blue-50 px-3 py-2 rounded">
-                                        ✓ Ubicación activa
-                                    </p>
+                                    <p className="text-sm text-slate-500">Descripción</p>
+                                    <p className="text-base text-slate-900">{donor.description}</p>
                                 </div>
                             )}
                             <Button
                                 variant="outline"
-                                className="w-full mt-4"
-                                onClick={() => router.push("/donor/update-profile")}
+                                size="lg"
+                                className="w-full border-slate-200 text-slate-950 hover:bg-slate-100"
+                                onClick={() => router.push('/donor/update-profile')}
                             >
                                 Editar Perfil
                             </Button>
                         </CardContent>
                     </Card>
 
-                    {/* Acciones Rápidas */}
-                    <Card>
+                    <Card className="rounded-[2rem] border border-slate-200 bg-white shadow-sm">
                         <CardHeader>
                             <CardTitle>Acciones Rápidas</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                            <Button
-                                className="w-full bg-green-600 hover:bg-green-700"
-                                onClick={() => router.push("/donor/update-profile")}
+                        <CardContent className="space-y-4 py-6">
+                            <button
+                                type="button"
+                                style={{ backgroundColor: '#16a34a', color: '#ffffff' }}
+                                className="w-full rounded-full px-4 py-3 text-sm font-semibold shadow-md transition focus:outline-none"
+                                onClick={() => router.push('/donor/update-profile')}
                             >
                                 Editar Perfil
-                            </Button>
-                            <Button
-                                className="w-full bg-green-600 hover:bg-green-700"
-                                onClick={() => router.push("/donor/nearby-banks")}
+                            </button>
+                            <button
+                                type="button"
+                                style={{ backgroundColor: '#16a34a', color: '#ffffff' }}
+                                className="w-full rounded-full px-4 py-3 text-sm font-semibold shadow-md transition focus:outline-none"
+                                onClick={() => router.push('/donor/nearby-banks')}
                             >
                                 Buscar Bancos
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="w-full"
-                                onClick={() => router.push("/")}
+                            </button>
+                            <button
+                                type="button"
+                                style={{ backgroundColor: '#16a34a', color: '#ffffff' }}
+                                className="w-full rounded-full px-4 py-3 text-sm font-semibold shadow-md transition focus:outline-none"
+                                onClick={() => router.push('/')}
                             >
                                 Volver al Inicio
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    {/* Estadísticas */}
-                    {/* Donabilidad */}
-                    <Card className="lg:col-span-3">
-                        <CardHeader>
-                            <CardTitle>Estado de Donación</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                                    <p className="text-sm text-red-700 font-semibold">Donación de Sangre</p>
-                                    <p className="text-xs text-red-600 mt-1">
-                                        Tipo: <span className="font-semibold">{donor?.blood_type}</span>
-                                    </p>
-                                    <p className="text-xs text-red-600 mt-2">
-                                        Cuéntale a los bancos dónde estás y recibirás notificaciones cuando necesiten tu sangre.
-                                    </p>
-                                </div>
-                                <div className={`p-4 rounded-lg border ${
-                                    donor?.puede_donar_leche
-                                        ? 'bg-blue-50 border-blue-200'
-                                        : 'bg-gray-50 border-gray-200'
-                                }`}>
-                                    <p className={`text-sm font-semibold ${
-                                        donor?.puede_donar_leche ? 'text-blue-700' : 'text-gray-700'
-                                    }`}>
-                                        {donor?.puede_donar_leche ? 'Donación de Leche' : 'No Puede Donar Leche'}
-                                    </p>
-                                    <p className={`text-xs mt-2 ${
-                                        donor?.puede_donar_leche ? 'text-blue-600' : 'text-gray-600'
-                                    }`}>
-                                        {donor?.puede_donar_leche
-                                            ? 'Disponible para donar leche materna'
-                                            : 'No disponible para donar leche materna'
-                                        }
-                                    </p>
-                                </div>
-                            </div>
+                            </button>
                         </CardContent>
                     </Card>
                 </div>
+
+                <Card className="rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+                    <CardHeader>
+                        <CardTitle>Estado de Donación</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="rounded-[2rem] border border-red-200 bg-red-50 p-5">
+                                <p className="text-sm font-semibold text-red-700">Donación de Sangre</p>
+                                <p className="text-xs text-red-600 mt-2">Tipo: <span className="font-semibold">{donor?.blood_type}</span></p>
+                                <p className="text-xs text-red-600 mt-3">
+                                    Cuéntale a los bancos dónde estás y recibirás notificaciones cuando necesiten tu sangre.
+                                </p>
+                            </div>
+                            <div className={`rounded-[2rem] border p-5 ${donor?.puede_donar_leche ? 'border-blue-200 bg-blue-50' : 'border-slate-200 bg-slate-50'}`}>
+                                <p className={`text-sm font-semibold ${donor?.puede_donar_leche ? 'text-blue-700' : 'text-slate-700'}`}>
+                                    {donor?.puede_donar_leche ? 'Donación de Leche' : 'No Puede Donar Leche'}
+                                </p>
+                                <p className={`text-xs mt-2 ${donor?.puede_donar_leche ? 'text-blue-600' : 'text-slate-600'}`}>
+                                    {donor?.puede_donar_leche
+                                        ? 'Disponible para donar leche materna'
+                                        : 'No disponible para donar leche materna'
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

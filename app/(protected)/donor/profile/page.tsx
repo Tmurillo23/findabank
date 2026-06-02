@@ -1,10 +1,10 @@
-import { DonorProfileForm } from "@/features/donors/components/DonorProfileForm";
+import { DonorDashboard } from "@/features/donors/components";
 
 export default function DonorProfilePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        <DonorProfileForm />
+    <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <DonorDashboard />
       </div>
     </div>
   );

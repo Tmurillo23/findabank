@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Label } from "@/shared";
 import { upsertMilkStock, getMilkStock } from "@/features/banks/services/bankStockService";
 import { createClient } from "@/shared/services/supabase/client";
@@ -9,6 +10,7 @@ import {MilkStockEditorProps,STOCK_SITUATIONS, MILK_TYPES} from "@/features/bank
 
 
 export function MilkStockEditor({ bancoId = "", readOnly = false }: Readonly<MilkStockEditorProps>) {
+  const router = useRouter();
   const [stock, setStock] = useState<MilkStock[]>([]);
   const [milkType, setMilkType] = useState<(typeof MILK_TYPES)[number]>("leche_madura");
   const [situation, setSituation] = useState<"suficiente" | "critico" | "no_hay">("suficiente");
@@ -170,7 +172,10 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: Readonly<Mil
               });
 
               setSuccessMessage("Stock de leche actualizado correctamente");
-              setTimeout(() => setSuccessMessage(null), 1500);
+              setTimeout(() => {
+                setSuccessMessage(null);
+                router.push("/bank");
+              }, 700);
               setIsSaving(false);
             }}
             className="w-full mt-6"

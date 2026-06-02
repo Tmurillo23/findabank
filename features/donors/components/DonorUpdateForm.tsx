@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/shared/services/utils";
 import type { BloodType, DonorProfile } from "@/features/donors/types";
 import {BLOOD_TYPES} from "@/features/donors/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 
 export function DonorUpdateForm({ className, ...props }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
@@ -106,18 +106,20 @@ const saveProfile = async () => {
       descripcion: description,
       latitude: Number.parseFloat(latitude),
       longitude: Number.parseFloat(longitude),
-      correo: donor.correo
+      correo: donor.correo,
     };
 
-    updateDonorProfileInfo(upsertData).then(() => {
+    try {
+      await updateDonorProfileInfo(upsertData);
       setSuccessMessage("Perfil guardado correctamente.");
-      
-      
       setTimeout(() => {
-        setSuccessMessage(null);
-        setIsLoading(false);
-      }, 1100);
-    });
+        router.push("/donor");
+      }, 700);
+    } catch (error) {
+      setFormError("Hubo un error al guardar el perfil. Intenta nuevamente.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -150,6 +152,15 @@ const saveProfile = async () => {
           <p className="text-sm font-semibold text-green-700">{successMessage}</p>
         </div>
       )}
+      <Button
+        type="button"
+        onClick={() => router.back()}
+        variant="outline"
+        className="w-fit gap-2"
+      >
+        <ArrowLeft size={18} />
+        Volver
+      </Button>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
