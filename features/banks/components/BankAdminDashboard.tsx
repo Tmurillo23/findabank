@@ -272,21 +272,20 @@ export function BankAdminDashboard() {
                                     className="w-48 px-6 py-2 font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors" 
                                     onClick={() => router.push('/bank/update-profile')}
                                 >
-                                    ⚙️ Configuración
+                                    Configuración
                                 </Button>
                                 <Button 
                                     variant="secondary" 
                                     className="w-48 px-6 py-2 font-semibold" 
                                     onClick={() => router.push('/bank/campaigns')}
                                 >
-                                    📢 Gestionar Campañas
+                                    Gestionar Campañas
                                 </Button>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Timeline de Actividades */}
                 <div className="bg-white rounded-xl shadow-md border-0 p-6">
                     <h2 className="text-xl font-bold text-slate-900 mb-6">Actividad Reciente</h2>
                     <ActivityTimeline activities={activities} />
