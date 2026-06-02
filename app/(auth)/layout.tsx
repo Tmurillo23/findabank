@@ -51,11 +51,9 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Fondo general con degradado sutil en tonos rojos médicos para toda la autenticación
     <main className="min-h-screen bg-gradient-to-br from-red-50 via-slate-50 to-red-50/50 flex flex-col items-center justify-center p-4 overflow-x-hidden">
       <div className="w-full flex flex-col items-center">
         
-        {/* ENCABEZADO UNIFICADO: Con estilo institucional de banco de sangre */}
         <div className="text-center mb-6 flex flex-col items-center">
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-600/20 animate-pulse">
             <Droplet size={24} fill="currentColor" />
@@ -68,15 +66,12 @@ export default function AuthLayout({
           </p>
         </div>
 
-        {/* CONTENIDO DINÁMICO ({children} representa a Login o Sign-up) */}
         <Suspense>
-          {/* --- CORRECCIÓN CLAVE: Ampliamos el max-w de sm a md para que los formularios respiren --- */}
           <div className="w-full max-w-md bg-white rounded-[2rem] border border-red-100/80 p-8 shadow-[0_25px_70px_rgba(220,38,38,0.05)]">
             {children}
           </div>
         </Suspense>
 
-        {/* PIE DE PÁGINA */}
         <footer className="mt-8 text-center text-xs text-slate-400">
           <p>
             © 2026 FindADornor. Todos los derechos reservados.
