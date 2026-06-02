@@ -81,7 +81,7 @@ export function DonorUpdateForm({ className, ...props }: Readonly<React.Componen
     setGeoLoading(false);
   };
 
-  const saveProfile = async () => {
+const saveProfile = async () => {
     setIsLoading(true);
     setFormError(null);
     setSuccessMessage(null);
@@ -109,14 +109,17 @@ export function DonorUpdateForm({ className, ...props }: Readonly<React.Componen
       correo: donor.correo
     };
 
-    await updateDonorProfileInfo(upsertData);
-
-    setSuccessMessage("Perfil guardado correctamente.");
-    setTimeout(() => {
-      router.push("/donor");
-    }, 150);
+    updateDonorProfileInfo(upsertData).then(() => {
+      setSuccessMessage("Perfil guardado correctamente.");
+      
+      
+      setTimeout(() => {
+        setSuccessMessage(null);
+        setIsLoading(false);
+      }, 1100);
+    });
   };
-
+  
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     await saveProfile();
@@ -240,7 +243,7 @@ export function DonorUpdateForm({ className, ...props }: Readonly<React.Componen
 
               <Button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-red-600 hover:bg-red-700"
                 disabled={isLoading}
               >
                 {isLoading ? "Guardando..." : "Guardar Perfil"}
@@ -248,17 +251,6 @@ export function DonorUpdateForm({ className, ...props }: Readonly<React.Componen
             </div>
           </form>
         </CardContent>
-        <div className="border-t p-4">
-          <div className="max-w-md mx-auto">
-            <Button
-              onClick={saveProfile}
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? "Guardando..." : "Confirmar cambios"}
-            </Button>
-          </div>
-        </div>
       </Card>
     </div>
   );
