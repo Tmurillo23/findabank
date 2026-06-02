@@ -1,6 +1,6 @@
 import { BankViewPage } from "@/features/donors/components/BankViewPage";
 
-export default async function BankPublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function BankPublicProfilePage({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
   const { id } = await params;
 
   return (

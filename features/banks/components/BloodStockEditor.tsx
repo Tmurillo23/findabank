@@ -10,7 +10,7 @@ import { STOCK_SITUATIONS } from "@/features/banks/types";
 import {BloodStockEditorProps} from "@/features/banks/types/bloodStock";
 
 
-export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockEditorProps) {
+export function BloodStockEditor({ bancoId = "", readOnly = false }: Readonly<BloodStockEditorProps>) {
   const [stock, setStock] = useState<BloodStock[]>([]);
   const [selectedType, setSelectedType] = useState<(typeof BLOOD_TYPES)[number]>("O+");
   const [situation, setSituation] = useState<(typeof STOCK_SITUATIONS)[number]>("suficiente");
@@ -48,7 +48,6 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
   }, [bancoId]);
 
   if (readOnly) {
-    // Vista de solo lectura para la página principal
     return (
       <Card>
         <CardHeader>
@@ -68,7 +67,7 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
                       item.situacion === 'suficiente' ? 'text-green-600' :
                       item.situacion === 'critico' ? 'text-yellow-600' : 'text-red-600'
                     }`}>
-                      {item.situacion.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                      {item.situacion.replaceAll('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
                     </div>
                   </div>
                 ))}
@@ -126,7 +125,7 @@ export function BloodStockEditor({ bancoId = "", readOnly = false }: BloodStockE
             >
               {STOCK_SITUATIONS.map((situ) => (
                 <option key={situ} value={situ}>
-                  {situ.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                  {situ.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
                 </option>
               ))}
             </select>

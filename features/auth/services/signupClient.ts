@@ -1,4 +1,5 @@
 import { createClient } from "@/shared/services/supabase/client";
+import { mapSignUpError } from "@/shared/services/errors";
 import type { UserRole } from "@/features/auth/types";
 
 export async function signUpWithEmail(
@@ -22,12 +23,15 @@ export async function signUpWithEmail(
       data: {
         role,
       },
-      emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/confirm?next=${encodeURIComponent(redirectPath)}`,
+      emailRedirectTo: `${globalThis.window === undefined ? "" : globalThis.window.location.origin}/confirm?next=${encodeURIComponent(redirectPath)}`,
     },
   });
 
   if (error) {
-    throw error;
+    const mappedError = mapSignUpError(error);
+    if (mappedError) {
+      throw mappedError;
+    }
   }
 
   if (!data.user) {

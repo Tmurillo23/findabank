@@ -31,7 +31,7 @@ const STATUS_LABELS: Record<string, string> = {
   no_hay: "No hay",
 };
 
-export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
+export function BloodStockDisplay({ bancoId }: Readonly<BloodStockDisplayProps>) {
   const [stock, setStock] = useState<BloodStock[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,8 +62,7 @@ export function BloodStockDisplay({ bancoId }: BloodStockDisplayProps) {
 
 
 
-  // Sort blood types in a logical order
-  const sortedStock = stock.sort((a, b) => {
+  const sortedStock = stock.toSorted((a, b) => {
     const order = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
     return order.indexOf(a.tipo_sangre) - order.indexOf(b.tipo_sangre);
   });

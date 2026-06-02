@@ -2,9 +2,9 @@ import { Suspense } from "react";
 
 export default function AuthLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center">
       <div className="w-full flex flex-col gap-8 items-center">

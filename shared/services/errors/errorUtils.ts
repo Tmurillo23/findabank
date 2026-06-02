@@ -33,7 +33,7 @@ export async function chain<T, U, E = AppError>(
     fn: (value: T) => Promise<Result<U, E>>
 ): Promise<Result<U, E>> {
     const res = await result;
-    if (!res.ok) return res as Result<U, E>;
+    if (!res.ok) return res;
     return fn(res.value);
 }
 

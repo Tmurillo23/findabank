@@ -11,10 +11,10 @@ import {
 export default function ProtectedError({
   error,
   reset,
-}: {
+}: Readonly<{
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}>) {
   const router = useRouter();
 
   useEffect(() => {

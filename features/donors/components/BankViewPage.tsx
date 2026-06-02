@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { MapPin, ArrowLeft, Loader2, Droplets, Baby, Info } from "lucide-react";
 
-export function BankViewPage({ bankId }: { bankId: string }) {
+export function BankViewPage({ bankId }: Readonly<{ bankId: string }>) {
     const router = useRouter();
 
     const [bank, setBank] = useState<BankProfile | null>(null);
@@ -31,11 +31,11 @@ export function BankViewPage({ bankId }: { bankId: string }) {
 
             const userPos: Coordinates = await getCurrentLocation();
             const bankPos: Coordinates = {
-                lat: parseFloat(data.latitude),
-                lng: parseFloat(data.longitude)
+                lat: Number.parseFloat(data.latitude),
+                lng: Number.parseFloat(data.longitude)
             };
 
-            if (!isNaN(bankPos.lat) && !isNaN(bankPos.lng)) {
+            if (!Number.isNaN(bankPos.lat) && !Number.isNaN(bankPos.lng)) {
                 const d = calculateDistance(userPos, bankPos);
                 setDistance(d);
             }

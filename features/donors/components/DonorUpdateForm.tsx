@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createClient } from "@/shared/services/supabase/client";
 import { fetchDonorData, updateDonorProfileInfo } from "@/features/donors/services/donors";
 import { getCurrentLocation } from "@/shared/services/geolocalization/geolocalization";
@@ -12,7 +12,7 @@ import {BLOOD_TYPES} from "@/features/donors/types";
 import { Loader2 } from "lucide-react";
 
 
-export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+export function DonorUpdateForm({ className, ...props }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
   const router = useRouter();
 
   const [donor, setDonor] = useState<DonorProfile | null>(null);
@@ -44,7 +44,15 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
 
       const data = await fetchDonorData(user.id);
 
-      if (!data) {
+      if (data) {
+        setDonor(data);
+        setFullName(data.full_name || "");
+        setBloodType(data.blood_type || BLOOD_TYPES[0]);
+        setCanDonateMilk(data.puede_donar_leche || false);
+        setDescription(data.descripcion || "");
+        setLatitude(data.latitude?.toString() || "");
+        setLongitude(data.longitude?.toString() || "");
+      } else {
         setDonor({
           id: user.id,
           full_name: "",
@@ -56,14 +64,6 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
           longitude: 0,
           correo: user.email || "",
         });
-      } else {
-        setDonor(data);
-        setFullName(data.full_name || "");
-        setBloodType(data.blood_type || BLOOD_TYPES[0]);
-        setCanDonateMilk(data.puede_donar_leche || false);
-        setDescription(data.descripcion || "");
-        setLatitude(data.latitude?.toString() || "");
-        setLongitude(data.longitude?.toString() || "");
       }
 
       setLoading(false);
@@ -104,8 +104,8 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
       blood_type: bloodType,
       puede_donar_leche: canDonateMilk,
       descripcion: description,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      latitude: Number.parseFloat(latitude),
+      longitude: Number.parseFloat(longitude),
       correo: donor.correo
     };
 
@@ -117,7 +117,7 @@ export function DonorUpdateForm({ className, ...props }: React.ComponentPropsWit
     }, 150);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     await saveProfile();
   };

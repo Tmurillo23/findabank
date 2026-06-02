@@ -27,7 +27,7 @@ const STATUS_LABELS: Record<string, string> = {
   no_hay: "No hay",
 };
 
-export function MilkStockDisplay({ bancoId }: MilkStockDisplayProps) {
+export function MilkStockDisplay({ bancoId }: Readonly<MilkStockDisplayProps>) {
   const [stock, setStock] = useState<MilkStock[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -8,6 +8,7 @@ import {
     AuthorizationError,
     DatabaseError,
     SupabaseError,
+    SignUpError,
     ErrorSeverity
 } from '@/features/AppErrors';
 
@@ -25,7 +26,7 @@ function isSupabaseError(error: unknown): error is SupabaseErrorResponse {
 }
 
 
-export function mapSupabaseError(error: unknown): AppError {
+export function mapSupabaseError(error: unknown): AppError | null {
     if (error instanceof AppError) {
         return error;
     }
@@ -36,14 +37,7 @@ export function mapSupabaseError(error: unknown): AppError {
     const errorDetails = supabaseError.details || supabaseError.hint || '';
 
     if (errorCode === 'PGRST116' || errorCode === '404') {
-        return new NotFoundError(
-            'Resource not found',
-            {
-                originalCode: errorCode,
-                details: errorDetails,
-                originalMessage: errorMessage
-            }
-        );
+        return null;
     }
 
     if (
@@ -121,13 +115,76 @@ export function mapSupabaseError(error: unknown): AppError {
 }
 
 
+export function mapSignUpError(error: unknown): AppError | null {
+    if (error instanceof AppError) {
+        return error;
+    }
+
+    const supabaseError = error as SupabaseErrorResponse;
+    const errorCode = supabaseError.code?.toUpperCase() || '';
+    const errorMessage = supabaseError.message || 'Unknown sign-up error';
+    const errorDetails = supabaseError.details || supabaseError.hint || '';
+
+    // Email ya existe
+    if (errorCode === '23505' && errorMessage.toLowerCase().includes('email')) {
+        return new SignUpError(
+            'Este correo electrónico ya está registrado',
+            {
+                originalCode: errorCode,
+                details: errorDetails,
+                originalMessage: errorMessage
+            }
+        );
+    }
+
+
+
+    if (errorMessage.toLowerCase().includes('email') || errorCode === 'invalid_email') {
+        return new SignUpError(
+            'El correo electrónico no es válido',
+            {
+                originalCode: errorCode,
+                details: errorDetails,
+                originalMessage: errorMessage
+            }
+        );
+    }
+
+    const mappedError = mapSupabaseError(error);
+    if (mappedError === null) {
+        return null;
+    }
+    if (mappedError instanceof SignUpError) {
+        return mappedError;
+    }
+    if (mappedError instanceof ValidationError || mappedError instanceof AuthenticationError) {
+        return new SignUpError(
+            mappedError.message,
+            {
+                originalCode: errorCode,
+                details: errorDetails,
+                originalMessage: errorMessage
+            }
+        );
+    }
+    return null;
+}
+
+
 export function normalizeError(error: unknown): AppError {
     if (error instanceof AppError) {
         return error;
     }
 
     if (isSupabaseError(error)) {
-        return mapSupabaseError(error);
+        const mappedError = mapSupabaseError(error);
+        if (mappedError !== null) {
+            return mappedError;
+        }
+        return new NotFoundError(
+            'Resource not found',
+            { originalError: error }
+        );
     }
 
     if (error instanceof Error) {
@@ -137,7 +194,14 @@ export function normalizeError(error: unknown): AppError {
             message.includes('constraint') ||
             message.includes('not found')
         ) {
-            return mapSupabaseError(error);
+            const mappedError = mapSupabaseError(error);
+            if (mappedError !== null) {
+                return mappedError;
+            }
+            return new NotFoundError(
+                'Resource not found',
+                { originalError: error }
+            );
         }
 
         return new AppError(
@@ -183,5 +247,10 @@ export function isAuthorizationError(error: unknown): error is AuthorizationErro
 
 export function isNotFoundError(error: unknown): error is NotFoundError {
     return error instanceof NotFoundError;
+}
+
+
+export function isSignUpError(error: unknown): error is SignUpError {
+    return error instanceof SignUpError;
 }
 

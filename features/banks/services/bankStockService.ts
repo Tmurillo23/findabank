@@ -53,7 +53,7 @@ export async function upsertBloodStock(input: CreateBloodStockInput): Promise<Bl
       .single();
 
     if (error) throw mapSupabaseError(error);
-    return data as BloodStock;
+    return data;
   } else {
     const { data, error } = await supabase
       .from("stock")
@@ -67,7 +67,7 @@ export async function upsertBloodStock(input: CreateBloodStockInput): Promise<Bl
       .single();
 
     if (error) throw mapSupabaseError(error);
-    return data as BloodStock;
+    return data;
   }
 }
 
@@ -94,7 +94,7 @@ export async function upsertMilkStock(input: CreateMilkStockInput): Promise<Milk
       .single();
 
     if (error) throw mapSupabaseError(error);
-    return data as MilkStock;
+    return data;
   } else {
     const { data, error } = await supabase
       .from("stock")
@@ -108,7 +108,7 @@ export async function upsertMilkStock(input: CreateMilkStockInput): Promise<Milk
       .single();
 
     if (error) throw mapSupabaseError(error);
-    return data as MilkStock;
+    return data;
   }
 }
 

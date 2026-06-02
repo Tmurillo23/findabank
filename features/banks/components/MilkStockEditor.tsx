@@ -5,11 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Labe
 import { upsertMilkStock, getMilkStock } from "@/features/banks/services/bankStockService";
 import { createClient } from "@/shared/services/supabase/client";
 import type {MilkStock} from "@/features/banks/types";
-import {MilkStockEditorProps} from "@/features/banks/types";
-import {STOCK_SITUATIONS, MILK_TYPES} from "@/features/banks/types";
+import {MilkStockEditorProps,STOCK_SITUATIONS, MILK_TYPES} from "@/features/banks/types";
 
 
-export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEditorProps) {
+export function MilkStockEditor({ bancoId = "", readOnly = false }: Readonly<MilkStockEditorProps>) {
   const [stock, setStock] = useState<MilkStock[]>([]);
   const [milkType, setMilkType] = useState<(typeof MILK_TYPES)[number]>("leche_madura");
   const [situation, setSituation] = useState<"suficiente" | "critico" | "no_hay">("suficiente");
@@ -77,7 +76,7 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
                   <div key={item.tipo_leche} className="p-3 border rounded">
                     <div className="flex justify-between items-center">
                       <div className="font-semibold">
-                        {item.tipo_leche.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                        {item.tipo_leche.replaceAll('_', " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                       </div>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -88,7 +87,7 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {item.situacion.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                        {item.situacion.replaceAll('_', " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -118,7 +117,7 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
               >
                 {MILK_TYPES.map((type) => (
                   <option key={type} value={type}>
-                    {type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                    {type.replaceAll('_', " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                   </option>
                 ))}
               </select>
@@ -135,7 +134,7 @@ export function MilkStockEditor({ bancoId = "", readOnly = false }: MilkStockEdi
               >
                 {STOCK_SITUATIONS.map((situ) => (
                   <option key={situ} value={situ}>
-                    {situ.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                    {situ.replaceAll('_', " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                   </option>
                 ))}
               </select>

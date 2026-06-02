@@ -16,7 +16,7 @@ import { BankConfigTabKey } from "@/features/banks/types";
 import { updateBankProfileInfo, fetchBankData } from "@/features/banks/services/bankProfileService";
 import { createClient } from "@/shared/services/supabase/client";
 
-export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "milk_bank" | null }) {
+export function BankUpdateForm({ initialRole }: Readonly<{ initialRole?: "blood_bank" | "milk_bank" | null }>) {
   const router = useRouter();
 
   const [bankId, setBankId] = useState<string>("");
@@ -41,11 +41,11 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
       return;
     }
 
-    const timer = window.setTimeout(() => {
+    const timer = globalThis.window.setTimeout(() => {
       setSuccessMessage(null);
     }, 1500);
 
-    return () => window.clearTimeout(timer);
+    return () => globalThis.window.clearTimeout(timer);
   }, [successMessage]);
 
   useEffect(() => {
@@ -62,9 +62,7 @@ export function BankUpdateForm({ initialRole }: { initialRole?: "blood_bank" | "
       setBankId(user.id);
 
       let currentType: "sangre" | "leche" = "sangre";
-      if (initialRole === "milk_bank") {
-        currentType = "leche";
-      } else if (user.user_metadata?.role === "milk_bank") {
+      if (initialRole === "milk_bank" ||user.user_metadata?.role === "milk_bank") {
         currentType = "leche";
       }
       setBankType(currentType);

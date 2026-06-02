@@ -6,3 +6,4 @@ export * from './NotFoundError';
 export * from './SupabaseError';
 export * from './GeolocationError';
 export * from './DatabaseError';
+export * from './SignUpError';

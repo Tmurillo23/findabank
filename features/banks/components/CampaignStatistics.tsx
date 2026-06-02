@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import {CampaignStatisticsProps} from "@/features/campaigns/types";
 
 
-export function CampaignStatistics({ metrics }: CampaignStatisticsProps) {
+export function CampaignStatistics({ metrics }: Readonly<CampaignStatisticsProps>) {
   const total = metrics.total_campanas ?? 0;
   const active = metrics.campanas_activas ?? 0;
 

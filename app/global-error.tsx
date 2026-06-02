@@ -7,10 +7,10 @@ import { AppError } from '@/features/AppErrors';
 export default function GlobalError({
   error,
   reset,
-}: {
+}: Readonly<{
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}>) {
   useEffect(() => {
     // Log error to error reporting service (e.g., Sentry)
     console.error('Global error caught:', error);
@@ -22,7 +22,7 @@ export default function GlobalError({
   const errorCode = appError?.errorCode || 'ERR_UNKNOWN';
 
   return (
-    <html>
+    <html lang={"es"}>
       <body>
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
@@ -66,7 +66,7 @@ export default function GlobalError({
                 Reintentar
               </button>
               <button
-                onClick={() => (window.location.href = '/')}
+                onClick={() => (globalThis.location.href = '/')}
                 className="flex-1 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-medium rounded transition-colors"
               >
                 Ir al inicio

@@ -10,7 +10,6 @@ export function getCurrentLocation(): Promise<Coordinates> {
             reject(new Error("Geolocation no soportado en este navegador"));
             return;
         }
-
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 resolve({
@@ -18,8 +17,8 @@ export function getCurrentLocation(): Promise<Coordinates> {
                     lng: position.coords.longitude,
                 });
             },
-            (error) => {
-                reject(error);
+            () => {
+                reject(new Error("Error al obtener la ubicación"));
             }
         );
     });

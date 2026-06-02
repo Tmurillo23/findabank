@@ -51,6 +51,7 @@ export interface DashboardMetrics {
 }
 
 export interface ActivityItem {
+    indice_por_banco: number;
     tipo_actividad: string;
     fecha_actividad: string;
     categoria: string;

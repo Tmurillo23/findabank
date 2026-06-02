@@ -16,7 +16,11 @@ export async function fetchDonorData(donorId: string): Promise<DonorProfile | nu
     .single();
 
   if (error) {
-    throw mapSupabaseError(error);
+    const mappedError = mapSupabaseError(error);
+    if (mappedError === null) {
+      return null;
+    }
+    throw mappedError;
   }
 
   return data as DonorProfile | null;
@@ -30,7 +34,10 @@ export async function updateDonorProfileInfo(upsertData: Partial<DonorProfile>) 
     .upsert(upsertData);
 
   if (error) {
-    throw mapSupabaseError(error);
+    const mappedError = mapSupabaseError(error);
+    if (mappedError) {
+      throw mappedError;
+    }
   }
 }
 
@@ -51,9 +58,9 @@ export async function findNearbyBanks(
 
   return (banksData as BankProfile[])
       .map(bank => {
-          const lat = parseFloat(bank.latitude);
-          const lng = parseFloat(bank.longitude);
-          const isValidCoord = !isNaN(lat) && !isNaN(lng);
+          const lat = Number.parseFloat(bank.latitude);
+          const lng = Number.parseFloat(bank.longitude);
+          const isValidCoord = !Number.isNaN(lat) && !Number.isNaN(lng);
           const distance = isValidCoord
               ? calculateDistance(userLocation, {lat, lng})
               : Infinity;

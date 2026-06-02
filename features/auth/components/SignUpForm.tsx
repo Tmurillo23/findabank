@@ -6,32 +6,50 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Inpu
 import Link from "next/link";
 import { useState } from "react";
 import type { UserRole } from "@/features/auth/types";
+import { isSignUpError } from "@/shared/services/errors";
 
 export function SignUpForm({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: Readonly<React.ComponentPropsWithoutRef<"div">>) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [role, setRole] = useState<UserRole>("donor");
   const [isLoading, setIsLoading] = useState(false);
-  const handleSignUp = async (e: React.FormEvent) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSignUp = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
 
     if (password !== repeatPassword) {
-      throw new Error("Las contraseñas no coinciden");
+      setError("Las contraseñas no coinciden");
+      return;
     }
 
     setIsLoading(true);
 
-    await signUpWithEmail(email, password, role);
-
-    if (role === "donor") {
-      window.location.href = "/donor/update-profile";
-    } else if (role === "blood_bank" || role === "milk_bank") {
-      window.location.href = `/bank/update-profile?role=${role}`;
-    }
+    signUpWithEmail(email, password, role)
+      .then(() => {
+        if (role === "donor") {
+          globalThis.location.href = "/donor/update-profile";
+        } else if (role === "blood_bank" || role === "milk_bank") {
+          globalThis.location.href = `/bank/update-profile?role=${role}`;
+        }
+      })
+      .catch((err) => {
+        if (isSignUpError(err)) {
+          setError(err.message);
+        } else if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Ocurrió un error inesperado durante el registro");
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -90,6 +108,13 @@ export function SignUpForm({
                 onChange={(e) => setRepeatPassword(e.target.value)}
               />
             </div>
+
+            {error && (
+              <div className="rounded-md bg-red-50 p-3 border border-red-200">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creando cuenta..." : "Registrarse"}
             </Button>

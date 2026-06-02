@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { createCampaign } from "@/features/campaigns/services";
 import  {CampaignFormProps } from "@/features/campaigns/types";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 
 
 
-export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
+export function CampaignForm({ bankId, onCampaignCreated }: Readonly<CampaignFormProps>) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [ubicacion, setUbicacion] = useState("");
@@ -15,7 +15,7 @@ export function CampaignForm({ bankId, onCampaignCreated }: CampaignFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);

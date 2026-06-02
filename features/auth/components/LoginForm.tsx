@@ -14,22 +14,43 @@ import {
   Label
 } from "@/shared";
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export function LoginForm({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: Readonly<React.ComponentPropsWithoutRef<"div">>) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
 
-    await signInWithPassword(email, password);
-    await redirectByRole();
+    // Usar encadenamiento de promesas en lugar de try/catch
+    signInWithPassword(email, password)
+      .then(() => {
+        // redirectByRole lanza el error especial NEXT_REDIRECT que Next manejará
+        return redirectByRole();
+      })
+      .catch((err) => {
+        // Re-lanzar redirecciones internas de Next.js para que no se muestren
+        if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
+          throw err;
+        }
+
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Error al iniciar sesión. Por favor intenta de nuevo.");
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -72,6 +93,13 @@ export function LoginForm({
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
+            {error && (
+              <div className="rounded-md bg-red-50 p-3 border border-red-200">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>

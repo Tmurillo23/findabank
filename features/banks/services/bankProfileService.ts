@@ -3,11 +3,7 @@ import { mapSupabaseError } from "@/shared/services/errors";
 import { ValidationError } from "@/features/AppErrors";
 import {BankProfile, UpdateBankProfileInput} from "@/features/banks/types";
 
-/**
- * Fetches bank profile data by ID
- * @throws NotFoundError if bank not found
- * @throws SupabaseError for database errors
- */
+
 export async function fetchBankData(bankId: string): Promise<BankProfile | null> {
   const supabase = createClient();
 
@@ -18,18 +14,17 @@ export async function fetchBankData(bankId: string): Promise<BankProfile | null>
     .single();
 
   if (error) {
-    throw mapSupabaseError(error);
+    const mappedError = mapSupabaseError(error);
+    if (mappedError === null) {
+      return null;
+    }
+    throw mappedError;
   }
 
   return data as BankProfile | null;
 }
 
-/**
- * Updates bank profile information
- * Performs either update or insert based on existence
- * @throws ValidationError if bankId is invalid
- * @throws SupabaseError for database errors
- */
+
 export async function updateBankProfileInfo(bankId: string, updates: UpdateBankProfileInput) {
   if (!bankId || bankId.trim() === "") {
     throw new ValidationError("Bank ID is required", { bankId });
@@ -37,7 +32,6 @@ export async function updateBankProfileInfo(bankId: string, updates: UpdateBankP
 
   const supabase = createClient();
 
-  // Intentar UPDATE primero
   const { error: updateError, data: updateData } = await supabase
     .from("banco")
     .update(updates)
@@ -45,17 +39,23 @@ export async function updateBankProfileInfo(bankId: string, updates: UpdateBankP
     .select();
 
   if (updateError) {
-    throw mapSupabaseError(updateError);
+    const mappedError = mapSupabaseError(updateError);
+    if (mappedError) {
+      throw mappedError;
+    }
+    return;
   }
 
-  // Si no se actualizaron registros, intentar INSERT
   if (!updateData || updateData.length === 0) {
     const { error: insertError } = await supabase
       .from("banco")
       .insert({ id: bankId, ...updates });
 
     if (insertError) {
-      throw mapSupabaseError(insertError);
+      const mappedError = mapSupabaseError(insertError);
+      if (mappedError) {
+        throw mappedError;
+      }
     }
   }
 }

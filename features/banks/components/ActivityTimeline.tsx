@@ -5,7 +5,7 @@ import { Badge } from "@/shared/ui/badge";
 import {ActivityTimelineProps} from "@/features/banks/types";
 
 
-export function ActivityTimeline({ activities }: ActivityTimelineProps) {
+export function ActivityTimeline({ activities }: Readonly<ActivityTimelineProps>) {
 
   return (
     <Card>
@@ -17,8 +17,8 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
           {activities.length === 0 ? (
             <p className="text-muted-foreground">No hay actividades recientes.</p>
           ) : (
-            activities.map((activity, index) => (
-              <div key={index} className="flex items-start space-x-3">
+            activities.map((activity) => (
+              <div key={activity.indice_por_banco} className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
                   {activity.categoria === "ALERT" ? (
                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">

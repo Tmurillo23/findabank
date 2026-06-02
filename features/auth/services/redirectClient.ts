@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { mapSupabaseError } from "@/shared/services/errors";
 
 
 export async function redirectByRole() {
@@ -8,10 +9,20 @@ export async function redirectByRole() {
 
   const {
     data: { user },
+    error
   } = await supabase.auth.getUser();
 
+  if (error) {
+    const mappedError = mapSupabaseError(error);
+    if (mappedError) {
+      throw mappedError;
+    }
+    throw new Error("Error al obtener datos del usuario");
+  }
+
   if (!user) {
-    redirect("/");
+    throw new Error("No se encontró usuario autenticado. Por favor intenta de nuevo.");
+
   }
 
   const userRole = user.user_metadata?.role;

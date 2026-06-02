@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { createDonorProfile } from "@/features/auth/services/profileActions";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ import {BLOOD_TYPES} from "@/features/donors/types";
 export function DonorProfileForm({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: Readonly<React.ComponentPropsWithoutRef<"div">>) {
   const [fullName, setFullName] = useState("");
   const [bloodType, setBloodType] = useState<BloodType>(BLOOD_TYPES[0]);
   const [canDonateMilk, setCanDonateMilk] = useState(false);
@@ -39,7 +39,7 @@ export function DonorProfileForm({
     setGeoLoading(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -55,8 +55,8 @@ export function DonorProfileForm({
       blood_type: bloodType,
       puede_donar_leche: canDonateMilk,
       descripcion: description,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      latitude: Number.parseFloat(latitude),
+      longitude: Number.parseFloat(longitude),
     });
 
     router.push("/donor");

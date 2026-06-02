@@ -1,4 +1,5 @@
 import { createClient } from "@/shared/services/supabase/client";
+import { mapSupabaseError } from "@/shared/services/errors";
 
 
 export async function signInWithPassword(email: string, password: string) {
@@ -10,7 +11,12 @@ export async function signInWithPassword(email: string, password: string) {
   });
 
   if (error) {
-    throw error;
+    const mappedError = mapSupabaseError(error);
+    if (mappedError) {
+      throw mappedError;
+    }
+    // Si mapSupabaseError retorna null, lanzar error genérico
+    throw new Error("Credenciales inválidas. Por favor intenta de nuevo.");
   }
 
   return data;

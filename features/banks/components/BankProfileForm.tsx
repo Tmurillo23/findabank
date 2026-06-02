@@ -1,7 +1,7 @@
 "use client";
 
 
-import {FormEvent, useState} from "react";
+import React, {useState} from "react";
 import { createBankProfile } from "@/features/auth/services/profileActions";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/shared";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import {getCurrentLocation} from "@/shared/services/geolocalization";
 export function BankProfileForm({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: Readonly<React.ComponentPropsWithoutRef<"div">>) {
   const { role } = useUserRole();
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
@@ -34,7 +34,7 @@ export function BankProfileForm({
     setGeoLoading(false);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
